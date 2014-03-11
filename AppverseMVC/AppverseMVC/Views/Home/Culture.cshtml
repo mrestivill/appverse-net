@@ -1,0 +1,144 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+@model IEnumerable<String>
+
+@using Localization
+@{
+    ViewBag.Title = "Culture";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-lg-7">
+        <h4>Preferred languages received by this browser</h4>
+        <div class="alert alert-dismissable alert-info">
+            @foreach (string item in Model)
+            {
+                @item
+                <br />
+            }
+        </div>
+        <br />
+        <h4>Culture configuration for current session</h4>
+        <div class="alert alert-dismissable alert-info">
+            Language: @Localization.Layout.Resources.Language
+            <br />
+            CurrentCulture variable: @System.Threading.Thread.CurrentThread.CurrentCulture
+            <br />
+            CurrentUICulture variable: @System.Threading.Thread.CurrentThread.CurrentUICulture
+        </div>
+        <br />
+
+        Change culture:<br />
+        <ul>
+            <li>@Html.ActionLink("Català", "Culture", routeValues: new { newCulture = "ca" })</li>
+            <li>@Html.ActionLink("Castellano", "Culture", routeValues: new { newCulture = "es" })</li>
+            <li>@Html.ActionLink("English", "Culture", routeValues: new { newCulture = "en" })</li>
+            <li>@Html.ActionLink("Italiano", "Culture", routeValues: new { newCulture = "it-CH" })</li>
+            <li>
+                @Html.ActionLink("Browser default", "Culture", routeValues: new { newCulture = "-" })
+                <span class="help-block">
+                    Choose this option if you want to use the first available culture between your preferred languages
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div class="col-lg-5">
+        <br /><br />
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Check the differences when changing the culture</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="control-label" for="disabledInput">Date sample</label>
+                    <input class="form-control" id="dateSample1" disabled="" value="" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="disabledInput">Current date sample</label>
+                    <input class="form-control" id="dateSample2" disabled="" value="" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="disabledInput">Number sample</label>
+                    <input class="form-control" id="numberSample1" disabled="" value="" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="disabledInput">Big number sample</label>
+                    <input class="form-control" id="numberSample2" disabled="" value="" type="text">
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label" for="Moment">&#60;input type=“date”&#62;</label>
+                    <input class="form-control" data-val="true" data-val-date="The field must be a date." data-val-required="Required field" id="Moment" name="Moment" type="date" value="2013-10-30" />
+                    <span class="field-validation-valid" data-valmsg-for="Moment" data-valmsg-replace="true"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dateSample1').val(Globalize.format(new Date("2014/09/11"), 'd'));
+            $('#dateSample2').val(Globalize.format(new Date(), 'd'));
+            $('#numberSample1').val(Globalize.format(11.03, "N"));
+            $('#numberSample2').val(Globalize.format(12345.678, "N"));
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+            $.validator.methods.number = function (value, element) {
+                return this.optional(element) ||
+                    !isNaN(Globalize.parseFloat(value));
+            }
+
+            $.validator.methods.date = function (value, element) {
+                return this.optional(element) || Globalize.parseDate(value) || Globalize.parseDate(value, "@Appverse.Web.Constants.Formats.HTML5DateFormat");
+            }
+
+            jQuery.extend(jQuery.validator.methods, {
+                range: function (value, element, param) {
+                    //Use the Globalization plugin to parse the value
+                    var val = Globalize.parseFloat(value);
+                    return this.optional(element) || (
+                        val >= param[0] && val <= param[1]);
+                }
+            });
+    </script>
+}
+
+<br />
+<hr />
+<h2>Main topics covered in this section</h2>
+<div id="partialSection">
+    @Html.Partial((string)ViewBag.HelpPage.Page)
+</div>
+
+
+
+

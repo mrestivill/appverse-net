@@ -1,0 +1,94 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Bundling and Minification</h3>
+<p>
+    Bundling and minification are two techniques we can use to improve request load time.  Bundling and minification improves load time by reducing the number of requests to the server and reducing the size of requested assets (such as CSS and JavaScript.)
+    Bundling is a feature that makes it easy to combine or bundle multiple files into a single file. You can create CSS, JavaScript and other bundles. Fewer files means fewer HTTP requests and that can improve first page load  performance.
+    Minification performs a variety of different code optimizations to scripts or css, such as removing unnecessary white space and comments and shortening variable names to one character. With this technique we can reduce the size of the requested assets.
+
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode==false)
+{ 
+<p>
+    <h4>Controlling Bundling and Minification</h4>
+    Bundling and minification is enabled or disabled by setting the value of the debug attribute in the compilation Element  in the Web.config file.<br /><br />
+    In the following XML, debug is set to true so bundling and minification is disabled. To enable bundling and minification, set the debug value to "false"
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <pre class="prettyprint">
+    &lt;system.web&gt;
+        &lt;compilation debug="true" /&gt;
+    &lt;/system.web&gt;
+    </pre>
+    To override the Web.config setting with the <strong>EnableOptimizations</strong> property on the BundleTable class. 
+    The following code enables bundling and minification and overrides any setting in the Web.config file.
+    <pre class="prettyprint">
+    public class BundleConfig
+    {
+        // For more information on Bundling, visit http://go.microsoft.com/fwlink/?LinkId=254725
+        public static void RegisterBundles(BundleCollection bundles)
+        {
+            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                        "~/Scripts/jquery-{version}.js"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                        "~/Scripts/jquery-ui-{version}.js"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
+                        "~/Scripts/jquery.unobtrusive*",
+                        "~/Scripts/jquery.validate*"));
+            // Use the development version of Modernizr to develop with and learn from. Then, when you're
+            // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
+            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
+                        "~/Scripts/modernizr-*"));
+            bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
+                        "~/Content/themes/base/jquery-ui.css"));
+            bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
+                        "~/Content/themes/base/jquery.ui.core.css",
+                        "~/Content/themes/base/jquery.ui.resizable.css",
+                        "~/Content/themes/base/jquery.ui.selectable.css",
+                        "~/Content/themes/base/jquery.ui.accordion.css",
+                        "~/Content/themes/base/jquery.ui.autocomplete.css",
+                        "~/Content/themes/base/jquery.ui.button.css",
+                        "~/Content/themes/base/jquery.ui.dialog.css",
+                        "~/Content/themes/base/jquery.ui.slider.css",
+                        "~/Content/themes/base/jquery.ui.tabs.css",
+                        "~/Content/themes/base/jquery.ui.datepicker.css",
+                        "~/Content/themes/base/jquery.ui.progressbar.css",
+                        "~/Content/themes/base/jquery.ui.theme.css"));
+            
+            //overriding the web.config property
+        #if DEBUG
+            BundleTable.EnableOptimizations = false;
+        #else
+            BundleTable.EnableOptimizations = true;
+        #endif
+        }
+    }
+    </pre>
+    <a class="btn btn-default" href="http://www.asp.net/mvc/tutorials/mvc-4/bundling-and-minification">Learn more…</a>
+</p>
+<p>
+
+</p>
+}
+

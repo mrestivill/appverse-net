@@ -1,0 +1,178 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>
+    External Authentication
+</h3>
+<p>Visual Studio 2013 and ASP.NET 4.5.1 make integration with external authentication services easier for developers by providing built-in integration for the following authentication services:</p>
+<ul>
+    <li>Facebook</li>
+    <li>Google</li>
+    <li>Microsoft Accounts (Windows Live ID accounts)</li>
+    <li>Twitter</li>
+</ul>
+<p> </p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <p>
+        The new security feature design for MVC 5 is based on <a href="http://owin.org/">OWIN</a> authentication middleware. The benefit for it is that security feature can be shared by other components that can be hosted on OWIN.
+        Since the <a href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">Katana</a> team did a great effort to support the OWIN integrated pipeline in ASP.NET, it can also secure apps hosted on IIS,
+        including ASP.NET MVC, Web API, Web Form.
+    </p>
+
+    <img src="~/Images/Help/owin1024.png" class="img-responsive" />
+
+    <p>
+        OWIN, or the Open Web Interface for .NET, defines a standard interface between .NET web servers and web applications. The goal of the OWIN interface is to decouple server and application,
+        encourage the development of simple modules for .NET web development, and, by being an open standard, stimulate the open source ecosystem of .NET web development tools. The design of OWIN is
+        inspired by <a href="http://nodejs.org/">node.js</a>, <a href="http://rack.github.com/">Rack</a>, and <a href="http://wsgi.readthedocs.org/en/latest/index.html">WSGI</a>.
+    </p>
+    <p>OAuth in MVC 4: DotNetOpenAuth &amp; OAuthWebSecurity</p><p>OAuth in MVC :OWIN</p><p> </p><p>
+        This show case is using OWIN for external authentication and it is possible to login to it using a
+        Google or Microsoft account.
+    </p>
+
+    <h4>Enabling Google OpenID authentication</h4>
+    <p>Open the App_Start\Startup.Auth.cs file and remove the comment characters in  //app.UseGoogleAuthentication(); line.</p>
+
+    <h4>Enabling Microsoft Authentication</h4>
+    <p>
+        Microsoft authentication requires you to create a developer account, and it requires a client ID and client secret in order to function. For information about creating a Microsoft developer account
+        and obtaining your client ID and client secret, see <a href="http://go.microsoft.com/fwlink/?LinkID=144070">http://go.microsoft.com/fwlink/?LinkID=144070</a>.
+    </p>
+    <p>To obtain  client ID and client secret you will need to create a Host name. With the localhost or the IP address it will not work. Also, for each URL you use, you will need a new one.</p><p>
+        Once you have
+        obtained your consumer key and consumer secret, you have to modify the  Startup.Auth.cs file. In the show case, we have defined these constants in the Web.config file and different values for each environment.
+    </p>
+
+    <h4>Code in the showcase</h4>
+    <p>This is how the class looks in this show case:</p>
+    <p> </p>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+<pre class="prettyprint">
+    public partial class Startup
+    {
+        // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
+        public void ConfigureAuth(IAppBuilder app)
+        {
+            // Enable the application to use a cookie to store information for the signed in user
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                LoginPath = new PathString("/Account/LoginAlert")                
+            });
+            // Use a cookie to temporarily store information about a user logging in with a third party login provider
+            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            // Uncomment the following lines to enable logging in with third party login providers
+            app.UseMicrosoftAccountAuthentication(
+                    clientId: System.Configuration.ConfigurationManager.AppSettings["MicrosoftClientId"], 
+                    clientSecret: System.Configuration.ConfigurationManager.AppSettings["MicrosoftClientSecret"]);
+            //app.UseTwitterAuthentication(
+            //   consumerKey: "",
+            //   consumerSecret: "");
+            //app.UseFacebookAuthentication(
+            //   appId: "",
+            //   appSecret: "");
+            app.UseGoogleAuthentication();
+        }
+    }
+</pre>
+    <p>The _ExternalLoginsListPartial.cshtml page contains the code that dinamically shows a button for each external provider that has been defined and configured:</p>
+
+    <pre class="prettyprint">
+&#64;{
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+    if (loginProviders.Count() > 0)
+    {
+        string action = Model.Action;
+        string returnUrl = Model.ReturnUrl;
+        using (Html.BeginForm(action, "Account", new { ReturnUrl = returnUrl }))
+        {
+            &#64;foreach (AuthenticationDescription p in loginProviders)
+            {
+                &#60;button type="submit" class="btn btn-default" id="&#64;p.AuthenticationType" name="provider" value="&#64;p.AuthenticationType" title="Log in using your &#64;p.Caption account">&#64;p.AuthenticationType&#60;/button>
+            }
+        }
+    }
+}
+</pre>
+
+    <p>The rest of important code is in the AccountController.cs controller class:</p>
+
+    <pre class="prettyprint">
+        // POST: /Account/ExternalLogin
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            // Request a redirect to the external login provider
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+        }
+        
+        // GET: /Account/ExternalLoginCallback
+        [AllowAnonymous]
+        public async Task&#60;actionresult> ExternalLoginCallback(string returnUrl)
+        {
+            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+            if (loginInfo == null)
+            {
+                return RedirectToAction("Login");
+            }
+            // Sign in the user with this external login provider if the user already has a login
+            var user = await UserManager.FindAsync(loginInfo.Login);
+            ...
+        }
+</pre>
+
+
+
+    <p> </p>
+    <p>Recommended links to know more about external Authentication:</p>
+    <p>
+        <a href="http://www.asp.net/mvc/tutorials/mvc-5/create-an-aspnet-mvc-5-app-with-facebook-and-google-oauth2-and-openid-sign-on">http://www.asp.net/mvc/tutorials/mvc-5/create-an-aspnet-mvc-5-app-with-facebook-and-google-oauth2-and-openid-sign-on</a>
+        <br />        <a href="http://www.asp.net/web-api/overview/security/external-authentication-services">http://www.asp.net/web-api/overview/security/external-authentication-services</a>
+    </p>
+    <p>Recommended links to extend functionality:</p>
+    <p>
+        <a href="http://weblogs.asp.net/jeff/archive/2013/10/03/decoupling-owin-external-authentication-from-asp-net-identity.aspx">http://weblogs.asp.net/jeff/archive/2013/10/03/decoupling-owin-external-authentication-from-asp-net-identity.aspx</a>
+        <br />
+        <a href="http://stackoverflow.com/questions/18885569/how-do-i-ignore-the-identity-framework-magic-and-just-use-the-owin-auth-middlewa/18923770#18923770">http://stackoverflow.com/questions/18885569/how-do-i-ignore-the-identity-framework-magic-and-just-use-the-owin-auth-middlewa/18923770#18923770</a>
+        <br />
+        <a href="http://blogs.msdn.com/b/webdev/archive/2013/10/16/get-more-information-from-social-providers-used-in-the-vs-2013-project-templates.aspx">http://blogs.msdn.com/b/webdev/archive/2013/10/16/get-more-information-from-social-providers-used-in-the-vs-2013-project-templates.aspx</a>
+        <br />
+        <a href="http://stackoverflow.com/questions/17937553/get-extradata-from-mvc5-framework-oauth-owin-identity-provider-with-external-aut/18833978#18833978">http://stackoverflow.com/questions/17937553/get-extradata-from-mvc5-framework-oauth-owin-identity-provider-with-external-aut/18833978#18833978</a>
+    </p>
+    <p>Recommended links to know more about OWIN:</p>
+    <p>
+        <a href="http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx#_Understanding_OWIN_Forms">http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx#_Understanding_OWIN_Forms</a>
+        <br />
+        <a href="http://owin.org/">http://owin.org/</a>
+        <br />
+        <a href="http://katanaproject.codeplex.com/">http://katanaproject.codeplex.com/</a>
+    </p>
+
+    <p>
+    </p>
+}
+

@@ -1,0 +1,287 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Containers</h3>
+<p>
+    Inversion of control is a simple principle that dictates that an external entity should send messages to programmer's objects in order to perform some specialized action or to allow the programmer to override some logic.
+    This is the main difference between an API and a framework. On the first case, your object uses the API in an active fashion; in the second case, the framework uses your objects, so your objects are now in a passive mode.
+    We are using Castle Windsor as a inversion of control container and interceptor provider. <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">[Ref]</a>
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <br />
+    <p>
+        <h4>Castle Windsor</h4>
+        Castle Windsor is very easy to start using, and covers almost all the needs of Inversion of Control that we need, if some functionality is not covered, we could extend the framework.
+        There are alternatives to Castle Windsor, such as Unity (Microsoft), StructureMap and Spring.NET.<br /><br />
+    </p>
+    <div class="row">
+        <div class="col-md-7">
+            <strong>Castle Windsor provides many features, some of them are:</strong><br />
+            <ul>
+                <li>Is a framework that implements the functionality we needed for Inversion of Control in our development.</li>
+                <li>Is highly extensible and complete to develop, if it's necesary more functionality it's possible extend or implement custom extensions.</li>
+                <li>Supports configuration through XML files or through a fantastic fluent API, even supports setting by convention.</li>
+                <li>Ready for use in web environments.</li>
+                <li>Supports integration with many third-party frameworks such as NHibernate, WCF, log4net, NLog, ActiveRecord, MonoRail, ASP.NET MVC, Rhino Service Bus, Quartz.Net, Rhino Security, SolrSharp, and some more.</li>
+            </ul>
+        </div>
+        <div class="col-md-5">
+            <strong>Basic concepts used in Castle Windsor</strong><br />
+            <ul>
+                <li>Service: it is the definition of a contract that defines a unit of functionality which then must be implemented by one or several components.</li>
+                <li>Component: it is the implementation of our service that will be instantiated and managed by our container.</li>
+                <li>Dependencies: the other services needed to run a component.</li>
+                <li>LifeStyle: controls in what scope instances are reused, and when to release them, Castle Windsor supports Singleton (default), Transient, PerThread, PerWebRequest, Pooled and Custom.</li>
+            </ul>
+        </div>
+    </div>
+    <br />
+    <p>
+        <strong>The main features we are using:</strong><br />
+        <strong>-	CONTAINER:</strong> As any container, it uses the principle stated above to manage classes. That is, their creation, destruction, lifetime, configuration, and dependencies.
+        This way classes do not need to obtain and configure the classes they depend on. This dramatically reduces coupling in a system and, as a consequence, simplifies reuse and testability.<br /><br />
+        When a component is added to the container, a few things happen. First, the container creates a ComponentModel to holds a meta information about the component.
+        Then it delegates the inspection of the component to the contributors. Each contributor cares about one specific task. For example, there is a contributor that gathers all
+        public constructors and adds to the ComponentModel, another one checks if the implementation implements specific lifecycle interfaces, another one looks for specific attributes of lifestyle,
+        and so on. It's possible to Extend the container to give the component instance more information, for example register interceptors (proxies), change the lifestyle, add more lifecycles. <br /><br />
+
+        <strong>-	INTERCEPTORS:</strong> Inject code around method's invocation. We have developed 4 generic interceptors: LogInterceptor, ExceptionInterceptor, TransactionInterceptor and CachingIntercetor.
+        It's possible to specify additional interfaces using fluent API or XML configuration.<br /><br />
+        Aspect Oriented Programming AOP (Interceptor in Castle Windsor), can allow the business application developer to focus on implementing business requirements without worrying about consistently applying and debugging repetitive infrastructure
+        code throughout the application. Allow the separation of cross cutting concerns, such as logging, authorization, and exception handling, from the business logic core of the application.<br /><br />
+        Castle Windsor handles Interceptors with Castle DynamicProxy, that is used to manage crosscutting concerns with the concept of Interceptors and the interface IInterceptor. The basic is the ability to
+        create a component that is able to intercept every call to methods and or properties of an interface, and deciding with Windsor configuration where to apply this interceptor. At the most basic level, let’s
+        consider this simple interface and its implementation.<br />
+        Example: IInterceptor implementation:
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+        <pre class="prettyprint">
+        public class ExceptionInterceptor : IInterceptor
+        {
+            public ILogger Logger { get; set; }
+            public void Intercept(IInvocation invocation)
+            {
+                try
+                {
+                    invocation.Proceed();
+                }
+                catch (Exception ex)
+                {
+                    string message = ex.Message;
+                    if (ex.InnerException != null)
+                        message = message + " " + ex.InnerException.Message;
+                    Logger.ErrorFormat(ex, "{0}.{1} {2} ", invocation.TargetType.FullName, invocation.Method.Name, message);
+                    throw;
+                }
+            }
+        }
+        </pre>
+        XML configuration (web.config)
+        <pre class="prettyprint">
+        &lt;configuration&gt;
+        ....
+        ....
+            &lt;castle&gt;
+                &lt;components&gt;
+                    &lt;component id="ExceptionInterceptor"
+                    service="Appverse.Core.Interceptors.ExceptionInterceptor, Appverse.Core"
+                    type="Appverse.Core.Interceptors.ExceptionInterceptor, Appverse.Core"
+                    lifestyle="singleton"&gt;
+                    &lt;/component&gt;  
+                &lt;/components&gt;
+            &lt;/castle&gt;
+        &lt;/configuration&gt;
+        </pre>
+        <strong>Transaction interceptor</strong>. 
+        The <a href="http://msdn.microsoft.com/en-us/library/ms172152(v=vs.110).aspx" target="_blank">TransactionScope</a> class provides a simple way to mark a block of code as participating in a transaction, 
+        without requiring you to interact with the transaction itself. A transaction scope can select and manage the ambient transaction automatically. Due to its ease of use and efficiency, it is recommended 
+        that you use the TransactionScope class when developing a transaction application.<br />
+        Example: TransactionInterceptor
+        <pre class="prettyprint">
+        public class TransactionInterceptor : Castle.DynamicProxy.IInterceptor
+        {
+            public ILogger Logger { get; set; }
+            public bool WriteToLog { get; set; }
+            public void Intercept(IInvocation invocation)
+            {
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    try
+                    {
+                        if (WriteToLog) Logger.DebugFormat("Transaction Begin: {0}.{1}", invocation.TargetType.FullName, invocation.Method.Name);
+                        invocation.Proceed();
+                        transaction.Complete();
+                        if (WriteToLog) Logger.DebugFormat("Transaction Complete: {0}.{1}", invocation.TargetType.FullName, invocation.Method.Name);
+                    }
+                    catch (Exception)
+                    {
+                        //The Exception is logged with the LogInterceptor
+                        transaction.Dispose();
+                        throw;
+                    }
+                }
+            }
+        }
+        </pre>
+        XML configuration (web.config)
+        <pre class="prettyprint">
+        &lt;configuration&gt;
+        ....
+        ....
+            &lt;castle&gt;
+                &lt;components&gt;
+                    &lt;component id="TransactionInterceptor" 
+                        service="Appverse.Core.Interceptors.TransactionInterceptor, Appverse.Core.Interceptors" 
+                        type="Appverse.Core.Interceptors.TransactionInterceptor, Appverse.Core.Interceptors" 
+                        lifestyle="singleton"&gt;
+                        &lt;parameters&gt;&lt;writetolog&gt;true&lt;/writetolog&gt;&lt;/parameters&gt;
+                    &lt;/component&gt;  
+                &lt;/components&gt;
+            &lt;/castle&gt;
+        &lt;/configuration&gt;
+        </pre>
+        If transaction is not disposed, there will be an error on that transaction, use the <a href="http://startbigthinksmall.wordpress.com/2009/05/04/the-transaction-has-aborted-tricky-net-transactionscope-behavior/" target="_blank">"TransactionAbortedException"</a>
+    </p>
+    <br />
+    <p>
+        <strong>-	FACILITIES:</strong> Facilities are the main way of extending the container. Using facilities you can integrate the container with external frameworks, like WCF or NHibernate, add new capabilities to the container like event wiring,
+        transaction support, or to components (synchronization, startable semantics). Using Facilities it is possible to augment the MicroKernel capabilities and integrate different project or technology, or implement new semantics.<br /><br />
+
+        Facilities can be grouped into three categories:
+        <ul>
+            <li>Integration facilities: Provide support for integration with other frameworks and projects, like NHibernate and ActiveRecord.</li>
+            <li>Basic services facilities: Provide support for services built into CastleProject. Services are just a means to carry out common tasks using a standard API.</li>
+            <li>Semantic facilities: Extend the features of the container by supplying new semantics for component configuration and management.</li>
+        </ul>
+
+        <a href="/Home/Index/_Logging" target="_blank"><strong>The Logging Facility</strong></a> of Castle Windsor. Castle Windsor comes with some additional, optional facilities, 
+        which are extensions to the out of the box functionality of Windsor. The facility provides common abstraction for major logging frameworks such as Log4net and NLog as well as built in logging mechanism of Trace class. 
+        This provides a common abstraction for the unlikely case of changing the logging framework after to start working on the application. More importantly though, the facility takes care of providing to the classes with 
+        correct ILogger instance for their need, without any additional static dependency that is present in most applications that not using Castle Windsor. 
+        The Loggin facility is used to add logging support to the showcase, in this case the Log4net facility with a custom implementation to maintain the database session with NHibernate.<br /><br />
+
+        Example: How to adds the LoggingFacility facility to the container. We configure it indicating that we want to use the Log4net api. After this, to log any message, we only need to 
+        declare "public ILogger Logger { get; set; }", check the previous example "ExceptionInterceptor" implementation.
+        <pre class="prettyprint">
+        //Very important: Use Castle.Core.Logging.ILogger, not log4net.Core.ILogger
+        public class LoggerInstaller : IWindsorInstaller
+        {
+            public void Install(IWindsorContainer container, IConfigurationStore store)
+            {
+                container.AddFacility&lt;LoggingFacility&gt;(f =&gt; f.UseLog4Net());
+            }
+        }
+        </pre>
+        XML configuration (web.config)
+        <pre class="prettyprint">
+        &lt;configuration&gt;
+        ....
+        ....
+            &lt;castle&gt;
+                &lt;facilities&gt;
+                    &lt;facility id="logging" 
+                    type="Castle.Facilities.Logging.LoggingFacility, Castle.Facilities.Logging" 
+                    loggingapi="log4net" 
+                    configfile="log4net.Config" /&gt;
+                &lt;/facilities&gt;
+            &lt;/castle&gt;
+        &lt;/configuration&gt;
+        </pre>
+        <div class="well">
+            <strong>NOTE:</strong> Using dependency injection, we can log any message in any class only declaring a public property or an input parameter of the constructor as ILogger type.
+            We have developed an interceptor that works in the same way. This interceptor can be declared programmatically but we have declared in the web.config file so if we do not use it, we can deactivate it.
+            Other example is the business class of the ItemRepository is using this interceptor. Any call to this class, will be logged. To change the Log4net configuration we have to change the log4net.config file.
+        </div>
+    </p>
+    <br />
+    <p>
+        @*- <a href="/Home/Index/_ORM"><strong>ORM NHibernate</strong></a>: It is a good practice that allows the declaration and initialization of classes and objects we use constantly and at different places as they could be accessing the database or writing logs.
+        Dependency injection is a way of objects getting configured with their dependencies by an external entity.<br /><br />
+        This may sound a bit abstract, so let me give you an example here.
+        E.g.:- In our code you have a class called 'DmsController', which has a dependency with 'IDocumentService'. This means that when you create an object of type DmsController, you need to pass an implementation of 'IDocumentService' as a parameter.
+        In this case think that you have two implementation of 'IDocumentService', where one is called 'DocumentService' (actual) and the other is called 'TestDocumentService' (Unit Test). Then the Unity Application Block
+        (using a pattern called Unity Pattern) allows you to dynamically configure the right implementation to resolve the dependency that ‘DmsController’ has with 'IDocumentService'.
+        If that is still not clear, let me show the way that I am using this application block to inject dependencies in my code. In order to use Unity Application Block, you need to have a custom controller factory defined.
+        In the screen above, you can see a class called 'UnityControllerFactory'. I used that class as my custom controller factory. If you look at the source code of that class, you will see that it inherits from the MVC 'DefaultControllerFactory'.
+        This means that I can use that class to replace the default MVC Controller Factory. As per the requirement of Unity Application Block, this custom class is used to set the container that carries the detail to resolve interfaces.
+        Let me show you how the ‘Application_Start’ method of ‘Global.asax’ looks like..*@
+        @*<a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=245157">Learn more &raquo;</a>*@
+    </p>
+    <h4>Castle Windsor and NHibernate</h4>
+    <p>
+        <strong>Persistence Layer using Dependency Injection</strong>, the ShowCase has been implement using <a href="/Home/Index/_ORM">NHibernate with FluentNHibernate</a> as our persistence layer but 
+        in reality the same practice could be done with EntityFramework.<br /><br />
+
+        Domain model setting up NHibernate
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+        <pre class="prettyprint">
+        public class PersistenceInstaller : IWindsorInstaller
+        {
+            public void Install(IWindsorContainer container, IConfigurationStore store)
+            {
+                container.AddFacility&lt;PersistenceFacility&gt;();
+            }
+        }
+        </pre>
+    </p>
+    <p>
+        By registering the components we didn't just tell Windsor how to create them. Windsor will also take care of properly destroying the instances for us, thus taking care of managing their full lifetime.
+        In layman terms, Windsor will dispose both objects when they are no longer being used. This means it will flush the changes we made to ISession to the database for us, and it will clean up the ISessionFactory.
+        And we get all of this for free.<br />
+
+        Here's one important, although invisible effect of what we just did. By registering the components we didn't just tell Windsor how to create them. Windsor will also take care of properly destroying the
+        instances for us, thus taking care of managing their full lifetime. In layman terms, Windsor will dispose both objects when they are no longer being used. This means it will flush the changes we made to
+        ISession to the database for us, and it will clean up the ISessionFactory. And we get all of this for free.<br /><br />
+
+        <strong>Registering components - via factory method</strong><br />
+        Now we need two more things - ISessionFactory and ISession (those are the user-level interfaces via which we interact with the database in our own code). We will register these components with a different
+        approach to our controllers. We have an open-ended set of controllers in the application, which is going to grow as we develop our application. In this case however, we have just one of each of these interfaces,
+        and we won't need different implementations. They are each one of a kind and there is no point in coming up with a convention to register just one class.<br /><br />
+
+        "PersistenceFacility" is the Persistence Layer facility
+        <pre class="prettyprint">
+        public class PersistenceFacility : AbstractFacility
+        {
+            // The custom initialization for the Facility.
+            // It must be overridden.
+            protected override void Init()
+            {
+                var config = BuildDatabaseConfiguration();
+                Kernel.Register(Component.For&lt;ISessionFactory&gt;()
+                                         .UsingFactoryMethod(_ =&gt; config.BuildSessionFactory()),
+                                Component.For&lt;ISession>()
+                                         .UsingFactoryMethod(k =&gt; k.Resolve&lt;ISessionFactory&gt;().OpenSession())
+                                         .LifestylePerWebRequest());
+            }
+        }
+        </pre>
+
+        We also don't want Windsor to create instances of these services - NHibernate is responsible for that. We don't have a pre-existing instance we can use, either. Actually even if we did, it still would not
+        be good - we want more than one instance of ISession so that we can utilise the Unit of Work pattern (don't get too concerned with this just yet if you don't know the pattern - we'll get to it).<br />
+
+        After bootstrapping the database FluentNHibernate gives us NHibernate.Cfg.Configuration instance. That object is what we need to use to obtain the ISessionFactory for our application
+        (notice this implies we'll have just one instance of ISessionFactory in the application). Similar, we want ISession to be obtained by calling OpenSession on ISessionFactory. Here's how we do it
+        <a href="http://docs.castleproject.org/Windsor.Windsor-Tutorial-Part-Six-Persistence-Layer.ashx" target="_blank">Persistence Layer</a>
+    </p>
+}
+

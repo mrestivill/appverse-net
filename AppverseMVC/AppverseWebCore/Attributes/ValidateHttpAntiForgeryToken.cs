@@ -63,7 +63,7 @@ namespace Appverse.Web.Core
             /// <returns>
             /// The authorization filter to synchronize.
             /// </returns>
-            public Task<HttpResponseMessage> ExecuteAuthorizationFilterAsynca(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+            public Task<HttpResponseMessage> ExecuteAuthorizationFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
             {
                 HttpRequestMessage request = actionContext.Request;
 

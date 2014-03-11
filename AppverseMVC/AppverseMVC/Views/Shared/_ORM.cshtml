@@ -1,0 +1,145 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Object-relational mapping</h3>
+<p>
+    Object-relational mapping (ORM, O/RM, and O/R mapping) in computer software is a programming technique for converting data between incompatible type systems in object-oriented programming languages.
+    This creates, in effect, a "virtual object database" that can be used from within the programming language. There are both free and commercial packages available that perform object-relational mapping.
+    <a href="http://en.wikipedia.org/wiki/Object-relational_mapping" target="_blank">[Ref]</a><br /><br />
+    - <a href="http://msdn.microsoft.com/en-us/library/bb399567(v=vs.110).aspx" target="_blank">Entity Framework</a>: For user administration, the project is using Entity Framework as ORM. It is the ORM
+    provided by Microsoft. And if you want to use the SimpleMemberShip provider implemented by Microsoft without extending or changing its functionality, it is the best solution.<br />
+    - <a href="http://nhforge.org/" target="_blank">NHibernate</a> + <a href="http://www.fluentnhibernate.org/" target="_blank">Fluent NHibernate</a>: The pagination server control has been developed using NHibernate. The repository and all business logic has been developed using generics,
+    so the code will work with any model.<br />
+    - Micro ORM / SQL Mappers: The primary feature is mapping from .NET classes to database tables. They are focused on simplicity, performance and basic CRUD operations rather than full automation and features that include Entity Framework or NHibernate. 
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <br />
+    <p>
+        <h4>Entity Framework</h4>
+        Entity Framework is an Object Relational Mapper (ORM), enables developers to work with data in the form of domain-specific objects and properties, such as customers and customer addresses, without having to concern themselves with the
+        underlying database tables and columns where this data is stored. With the Entity Framework, developers can work at a higher level of abstraction when they deal with data, and can create and maintain
+        data-oriented applications with less code than in traditional applications. Because the Entity Framework is a component of the .NET Framework, Entity Framework applications can run on any computer on
+        which the .NET Framework starting with version 3.5 SP1 is installed.<br />
+        Entity Framework provides many features, some of them are:
+        <ul>
+            <li>Databases supported: SQL Server, MySQL, PostgreSQL, Visual FoxPro, Firebird. <a href="http://msdn.microsoft.com/en-us/data/jj730568" target="_blank">[Ref]</a></li>
+            <li>Performing basic CRUD (Create, Read, Update, Delete) operations.</li>
+            <li>Easily managing "1 to 1", "1 to many", and "many to many" relationships.</li>
+            <li>Ability to have inheritance relationships between entities.</li>
+            <li>Have all data access logic written in higher level languages.</li>
+            <li>Represented conceptual model in a better way by using relationships among entities</li>
+            <li><a href="http://nhforge.org/wikis/howtonh/nhibernate-features.aspx" target="_blank">More ...</a></li>
+        </ul>
+        <strong>Versions:</strong> Here is a summary of the <a href="http://msdn.microsoft.com/en-us/data/jj574253" target="_blank">Entity Framework releases</a>.
+    </p>
+    <br />
+    <h4>NHibernate</h4>
+    <p>
+        Provides a framework for mapping an object-oriented domain model to a traditional relational database. Its purpose is to relieve the developer from a significant portion of relational data
+        persistence-related programming tasks. NHibernate is free as open source software. NHibernate is a port of Hibernate Core for Java to the .NET Framework. It handles persisting plain .NET
+        objects to and from an underlying relational database. Given an XML description of your entities and relationships, NHibernate automatically generates SQL for loading and storing the objects.
+        Optionally, you can describe your mapping metadata with attributes in your source code.<br /><br />
+        NHibernate's primary feature is mapping from .NET classes to database tables (and from CLR data types to SQL data types). NHibernate also provides data query and retrieval facilities.
+        NHibernate generates the SQL commands and relieves the developer from manual data set handling and object conversion, keeping the application portable to most SQL databases, with database
+        portability delivered at very little performance overhead.<br />
+        NHibernate provides transparent persistence for Plain Old CLR Objects (POCOs). The only strict requirement for a persistent class is a no-argument constructor, which does not have to be public.<br />
+        NHibernate provides many features, some of them are:
+    </p>
+    <ul>
+        <li>Databases supported: SQL Server, Oracle, DB2, Firebird, Informix, MySQL, PostgreSQL, SQLite, Sybase.</li>
+        <li>Flexible mapping strategies</li>
+        <li>Based on Hibernate (Java): Started as a port of Hibernate, Includes nearly all features of current Hibernate, Extends Hibernate by adding LINQ capabilities</li>
+        <li>Continuous integration development environment</li>
+        <li>Flexible query APIs</li>
+        <li>Multiple session configuration models</li>
+        <li>Logging support</li>
+        <li><a href="http://nhforge.org/wikis/howtonh/nhibernate-features.aspx" target="_blank">More ...</a></li>
+        <li><a href="http://www.fluentnhibernate.org/" target="_blank">Fluent NHibernate</a> is great for typed mapping of classes to underlying tables.</li>
+    </ul>
+
+    <p><strong>Code-based mapping:</strong></p>
+    <p>
+        In previous versions of NHibernate, you might recall XML files that were needed to configure the mapping of your .NET classes to the underlying database.
+        <a href="http://www.fluentnhibernate.org/" target="_blank">Fluent NHibernate</a> has been offering a very nice fluent API for replacing those mappings with code.
+        Not only does this prevent errors in the XML, it is also a very refactor-friendly approach. Strangely enough, NHibernate 3.2 has introduced a brand <a href="http://notherdev.blogspot.nl/2012/02/nhibernates-mapping-by-code-summary.html" target="_blank">new fluent API that directly competes with Fluent NHibernate</a>.
+    </p>
+    <p>
+        Until Entity Framework 4.1 the only way to set-up the mapping was through its data model designer (not to be confused with an OO designer).
+        But apparently the team behind it learned from Fluent Nhibernate and decided to introduce their own code-first approach. In terms of convention-based mapping, it seems quite limited, especially compared to Fluent NHibernate.
+    </p>
+    <p><strong>Versions:</strong> Here is a summary of the <a href="https://www.nuget.org/packages/NHibernate" target="_blank">NHibernate releases</a>.</p>
+
+    <br />
+    <h4>Fluent NHibernate</h4>
+    <p>
+        <strong><a href="http://www.fluentnhibernate.org/" target="_blank">Fluent NHibernate</a> </strong> offers an alternative to NHibernate's standard XML mapping files. Rather than writing XML documents (.hbm.xml files), Fluent NHibernate lets you write mappings in strongly typed C# code. This allows for easy refactoring, improved readability and more concise code.
+    </p>
+    <p>Fluent NHibernate also has several other tools, including:</p>
+    <ul>
+        <li>
+            <a href="/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto mappings</a> - where mappings are inferred from the design of your entities
+        </li>
+        <li>
+            <a href="/jagregory/fluent-nhibernate/wiki/Persistence-specification-testing">Persistence specification testing</a> - round-trip testing for your entities, without ever having to write a line of CRUD
+        </li>
+        <li>Full application configuration with our <a class="internal present" href="/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent configuration</a> API</li>
+        <li>
+            <a href="/jagregory/fluent-nhibernate/wiki/Database-configuration">Database configuration</a> - fluently configure your database in code
+        </li>
+    </ul>
+    <p>
+        Fluent NHibernate is external to the <a href="http://nhforge.org/media/p/4.aspx">NHibernate Core</a>, but is fully compatible with NHibernate. 
+        For more information about Fluent NHibernate, read this <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Getting-started">Getting started page</a>.
+    </p>    
+
+    <br />
+    <h4>MicroORM / SQL Mappers</h4>
+    <p>
+        - <a href="http://code.google.com/p/dapper-dot-net/" target="_blank">Dapper</a>, "a simple object mapper for .NET" by Sam Saffron, it's just a single class file and very easy to add to your project.
+        Dapper is perhaps the leanest and therefore the fastest of all the mappers we have looked. In most circumstances you wouldn't be able to tell the difference between it and native ADO.NET code.<br />
+        - <a href="https://github.com/tmsmith/Dapper-Extensions" target="_blank">Dapper Extensions</a> is a small library that complements Dapper by adding basic CRUD operations (Get, Insert, Update, Delete).
+    </p>
+    <br />
+    <p>
+        <h4>Transaction demarcation with SQL Server</h4>
+        <a href="/Home/Index/_Containers">Transaction demarcation scope</a> is the task of defining your transaction boundaries. Developers should not think in terms of starting and stopping transactions.
+        Instead, developers should think about sections of sequential actions that should be enclosed in some sort of transactional behavior. Proper transaction demarcation is very important because if not done
+        properly it can negatively affect the performance of your application. Many databases and database abstraction layers by default operate in auto-commit mode, which means that every single SQL statement
+        is wrapped in a small transaction. Without any explicit transaction demarcation from your side, this quickly results in poor performance because transactions are not cheap.<br /><br />
+
+        Transaction demarcation always wraps a sequence of actions, such as a single request, a single method, or a section of code within a method. The demarcation initializes some transactional behavior before the demarcated area begins,
+        then ends that transactional behavior when the demarcated area ends. The application server uses these demarcations to determine the appropriate calls to the TransactionManager object.<br /><br />
+
+        The <a href="http://technet.microsoft.com/en-us/library/cc771891.aspx" target="_blank">Distributed Transaction Coordinator (DTC)</a> service coordinates transactions that update transaction-protected
+        resources, such as databases, message queues, file systems, and so on. These transaction-protected resources may be contained on a single system or distributed across a network of systems.
+        By using the Component Services snap-in, you can configure your computers to support local, remote, and distributed transactions. You can also monitor and manage all transactions with Component Services.<br /><br />
+
+        Remember to <a href="http://social.msdn.microsoft.com/Forums/en-US/3749da7a-59df-4db7-ae2e-6d0e414750d4/msdtc-on-server-xxx-is-unavailable" target="_blank">start the service</a> called "Distributed Transaction Coordinator"
+    </p>
+    <p>
+        <a class="btn btn-default" href="http://www.devbridge.com/articles/entity-framework-6-vs-nhibernate-4/">Entity Framework 6 vs NHibernate 4</a>
+        This is not included in this comparative, but Nhibernate has a second level cache mechanism that you can use to cache ferequently read and static data in memory to gain a better performance.
+    </p>
+}
+

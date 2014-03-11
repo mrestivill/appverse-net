@@ -1,0 +1,181 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.Partial("_TechnicalLandscape")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_TechnicalLandscape" }, new { @class = "btn btn-default" })
+            @*@Html.ActionLink("Learn more »", "Index", "Home", null, null, "anchorSection", new { id = "_TechnicalLandscape" }, new { @class = "btn btn-default" })*@
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_MVC")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_MVC" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_WebApi")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_WebApi" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.Partial("_AccountsManager")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_AccountsManager" }, new { @class = "btn btn-default" })
+        </p>
+        @*<!-- If we want to load the link using ajax, we have to use this code -->
+            <p>
+                    @Ajax.ActionLink("Learn more (ajax) »", "Partial", new { id = "_Partial" },
+                    new AjaxOptions
+                    {
+                        UpdateTargetId = "partialSection",
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "GET"
+                    }, new { @class = "btn btn-default" })
+                </p>*@
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_ResponsiveLayout")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_ResponsiveLayout" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_Globalization")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_Globalization" }, new { @class = "btn btn-default" })
+        </p>
+        @*<!-- If we want to load the link using ajax, we have to use this code -->
+            <p>
+                    @Ajax.ActionLink("Learn more (ajax) »", "Partial", new { id = "_Partial" },
+                    new AjaxOptions
+                    {
+                        UpdateTargetId = "partialSection",
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "GET"
+                    }, new { @class = "btn btn-default" })
+                </p>*@
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.Partial("_AuthenticationAndAuthorization")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_AuthenticationAndAuthorization" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_ExternalAuthentication")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_ExternalAuthentication" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_Security")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_Security" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.Partial("_Containers")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_Containers" }, new { @class = "btn btn-default" })
+        </p>
+        @*<p>
+                @Ajax.ActionLink("Learn more (ajax) »", "Partial", new { id = "_Partial" },
+                new AjaxOptions
+                {
+                    UpdateTargetId = "partialSection",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "GET"
+                }, new { @class = "btn btn-default" })
+            </p>*@
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_AjaxAndJquery")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_AjaxAndJquery" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_Logging")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_Logging" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.Partial("_ORM")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_ORM" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_Bundling")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_Bundling" }, new { @class = "btn btn-default" })
+        </p>
+        @*<p>
+                @Ajax.ActionLink("Learn more (ajax) »", "Partial", new { id = "_Partial" },
+                new AjaxOptions
+                {
+                    UpdateTargetId = "partialSection",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "GET"
+                }, new { @class = "btn btn-default" })
+            </p>*@
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_ActiveDirectory")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_ActiveDirectory" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.Partial("_PartialViews")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_PartialViews" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_Caching")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_Caching" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+    <div class="col-md-4">
+        @Html.Partial("_NuGet")
+        <p>
+            @Html.ActionLink("Learn more »", "Index", new { id = "_NuGet" }, new { @class = "btn btn-default" })
+        </p>
+    </div>
+</div>

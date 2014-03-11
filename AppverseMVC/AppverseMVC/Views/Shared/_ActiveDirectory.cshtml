@@ -1,0 +1,372 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Active Directory Authentication</h3>
+<p>
+    This section will describe the Windows Authentication, Membership and Role Provider configuration and OWIN Authentication.
+</p>
+<p>
+    - <strong>Windows Authentication Single Sign On (SSO)</strong>, this Project has been implement using Visual Studio 2013 and ASP.NET MVC5 with Custom RoleProvider and 
+    shows how to configure the SSO on IIS and how to configure a Custom RoleProvider to retrieve informacion from Active Directory using the user Windows login account.<br />
+    - <strong>Membership and Role Provider</strong>, this Project has been implement using Visual studio 2012 and ASP.NET MVC4 to define the Active Directory and Custom RoleProvider configuration and 
+    shows how to configure the User Membership using Active Directory and how to configure the Role Provider to retrieve information of user roles.<br />
+    - <strong>OWIN Authentication</strong>, the main ShowCase has been implement on Visual Studio 2013 MVC5 to authenticate and register users to local data base. The ShowCase implements 
+    the OWIN Authentication to generate the user session. Forms authentication uses an application ticket that represents user's identity and keeps it inside user agent's cookie.
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <h2>Windows Authentication</h2>
+    <p>
+        The Windows authentication provider relies upon IIS to perform the required authentication of a client. After IIS authenticates a client,
+        it passes a security token to ASP.NET. ASP.NET constructs and attaches an object of the WindowsPrincipal Class to the application context based on 
+        the security token it receives from IIS. For more information, see <a href="http://msdn.microsoft.com/en-us/library/aa720716(v=vs.90).aspx">Windows Authentication Provider</a> 
+        and <a href="http://msdn.microsoft.com/en-us/library/System.Security.Principal.WindowsPrincipal(v=vs.110).aspx">WindowsPrincipal Class</a>.
+    </p>
+    <p>
+        <strong>IIS Configuration,</strong> to configure the IIS follow the next steps:
+        <pre>
+    1. Open IIS Manager and navigate to your website.
+    2. In Features View, double-click Authentication.
+    3. In the Authentication page, select Windows authentication. If Windows authentication is not an option, 
+       you'll need to make sure Windows authentication is installed on the server.
+        To enable Windows authentication on Windows:
+            a. In Control Panel open "Programs and Features".
+            b. Select "Turn Windows features on or off".
+            c. Navigate to Internet Information Services -> World Wide Web Services -> Security, and 
+               make sure the Windows authentication node is checked.
+        To enable Windows authentication on Windows Server:
+            d. In Server Manager, select Web Server (IIS) and click Add Role Services.
+            e. Navigate to Web Server -> Security, and make sure the Windows authentication node is checked.
+    4. In the Actions pane, click Enable to use Windows authentication.
+    5. In the Authentication page, select Anonymous authentication.
+    6. In the Actions pane, click Disable to disable anonymous authentication.
+        </pre>
+    </p>
+    <div class="well">
+        <a href="@ViewBag.mvc5Link" target="_blank"><strong>MVC5 - Windows Authentication: Single Sign On (SSO) & RoleProvider</strong></a>.
+        This ShowCase implements Single Sign On & Custom RoleProvider to authenticate the current user and get the roles from Active Directory Provider.
+        Windows Authentication authenticates using Windows accounts, so you do not need to write any custom authentication code.
+    </div>
+    
+    <h2>Membership Provider</h2>
+    <h4>Visual Studio 2012 - MVC4</h4>
+    <p>
+        This ShowCase shows how to use the ASP.NET membership feature with multiple Active Directory domains. It shows how to configure
+        an <a href="http://msdn.microsoft.com/en-us/library/system.web.security.activedirectorymembershipprovider(v=vs.100).aspx" target="_blank">ActiveDirectoryMembershipProvider</a> 
+        for each domain and the corresponding connection strings. It also shows how to get an instance of 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.security.membershipprovider(v=vs.110).aspx" target="_blank">MembershipProvider</a> 
+        corresponding to a specific domain and how to call membership APIs, such as ValidateUser, through the relevant provider.
+    </p>
+    <p>
+        By using a provider model, you can easily adapt the membership system to use different data stores or data stores with different schemas.
+        In addition, you can extend the membership system by creating a custom provider, which you might do to create an interface between the
+        membership system and an existing user database.
+        <a href="http://msdn.microsoft.com/en-us/library/ff650307.aspx" target="_blank">Learn more…</a>
+    </p>
+    <div class="well">
+        <a href="@ViewBag.mvc4Link" target="_blank"><strong>MVC4 - Active Directory Authentication: Membership & RoleProvider</strong></a>.
+        This ShowCase implements Membership & Custom RoleProvider to authenticate the user and get the roles using Active Directory Provider.
+    </div>
+    <h4>Configuration</h4>
+    <p>
+        Example: ShowCase configuration
+        <pre class="prettyprint">
+    &lt;!-- web.config configuration--&gt;
+    &lt;connectionstrings&gt;
+        &lt;add name="ConnectionStringName" connectionstring="LDAP://server" /&gt;
+    &lt;/connectionstrings&gt;
+    &lt;appsettings&gt;
+        ...
+        ...
+        &lt;!--Membership with AD value=false, with SQL value=true--&gt;
+        &lt;add key="enableSimpleMembership" value="false" /&gt;
+    &lt;/appsettings&gt;
+    ...
+    ...
+    &lt;system.web&gt;
+        &lt;membership defaultprovider="MembershipProviderName"&gt;
+            &lt;providers&gt;
+                &lt;clear /&gt;
+                &lt;add name="MembershipProviderName"
+                type="System.Web.Security.ActiveDirectoryMembershipProvider, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+                connectionStringName="ConnectionStringName"
+                connectionUsername="user"
+                connectionPassword="password"
+                attributeMapUsername="sAMAccountName"
+                enableSearchMethods="true" /&gt;
+            &lt;/providers&gt;
+        &lt;/membership&gt;
+    &lt;system.web&gt;
+        </pre>        
+        Membership User validation, Login and LoginOff on "AccountController.cs"
+        <pre class="prettyprint">
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public ActionResult Login(LoginModel model, string returnUrl)
+    {
+        if (ModelState.IsValid && Membership.Provider.ValidateUser(model.UserName, model.Password))
+        {
+            FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
+            return RedirectToLocal(returnUrl);
+        }
+
+        //Code commented to be replaced with Membership Provider
+        //if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
+        //{
+        //    return RedirectToLocal(returnUrl);
+        //}
+        // If we got this far, something failed, redisplay form
+
+        ModelState.AddModelError("", "The user name or password provided is incorrect.");
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult LogOff()
+    {
+        FormsAuthentication.SignOut();
+
+        //Code commented to be replaced with FormsAuthentication logOff
+        //WebSecurity.Logout();
+        return RedirectToAction("Index", "Home");
+    }
+        </pre>
+    </p>
+    <br />
+    <h4>Visual Studio 2013 - MVC5</h4>
+    <p>
+        ASP.NET authentication is based on <a href="http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx" target="_blank">Open Web Interface (OWIN) middleware</a> 
+        that can be used on any OWIN-based host. ASP.NET Identity does not have any dependency on System.Web. It is a fully compliant OWIN framework and can be used in any 
+        OWIN hosted application.
+    </p>
+    <p>
+        <a href="http://www.asp.net/identity/overview/getting-started/introduction-to-aspnet-identity" target="_blank">ASP.NET Identity</a> uses OWIN Authentication for log-in/log-out of users in the web site.
+        This means that instead of using FormsAuthentication to generate the cookie, the application uses OWIN CookieAuthentication to do that.
+    </p>
+    <p>
+        The ShowCase implements the OWIN Authentication to generate the user session. Forms authentication uses an application ticket that represents user's identity and keeps it inside user agent's cookie. 
+        When user first accesses a resource requiring authorization, it will redirect user to login page.  
+    </p>
+    <h2>Role Provider</h2>
+    <p>
+        ASP.NET <a href="http://msdn.microsoft.com/en-us/library/8fw7xh74(v=vs.85).aspx" target="_blank">Role Management</a> enables use a
+        number of different providers for ASP.NET applications. Use the supplied profile providers that are included with the
+        .NET Framework, or <a href="http://msdn.microsoft.com/en-us/library/317sza4k(v=vs.100).aspx" target="_blank">Implement Custom Provider</a>.
+        There are two primary reasons for creating a custom role provider:<br />
+        * Store role information in a data source that is not supported by the role providers included with the .NET Framework.<br />
+        * Manage role information using a database schema that is different from the database schema used by the providers that ship with the .NET Framework.
+        A common example of this would be authorization data that already exists in a SQL Server database for a company or Web site.
+    </p>
+    <h4>Configuration</h4>
+    <p>
+        <pre class="prettyprint">
+    &lt;!-- web.config configuration--&gt;
+    &lt;connectionstrings&gt;
+        &lt;add name="ConnectionStringName" connectionstring="LDAP://server" /&gt;
+    &lt;/connectionstrings&gt;
+    ...
+    ...
+    &lt;system.web&gt;
+        &lt;!-- Custom RoleProvider configuration--&gt;
+        &lt;rolemanager enabled="true" defaultprovider="RoleProviderName"&gt;
+            &lt;providers&gt;
+                &lt;clear /&gt;
+                &lt;add name="RoleProviderName"
+                type="Reference to Custom RoleProvider (Project.RoleProviderClass)"
+                connectionStringName="ConnectionStringName"
+                connectionUsername="user"
+                connectionPassword="password"
+                connectionAdminQuery="LDAP query filter"
+                connectionIPServer="server"
+                connectionAdminGroup="LDAP GroupName "
+                attributeMapUsername="user attribute map" /&gt;
+            &lt;/providers&gt;
+        &lt;/rolemanager&gt;
+    &lt;system.web&gt;
+        </pre>
+    </p>
+    <h4>RoleProvider Initialize</h4>
+    <p>
+        <pre class="prettyprint">
+    @*/// &lt;summary&gt;
+    /// Initialize RoleProvider
+    /// &lt;/summary&gt;
+    /// &lt;param name="name"&gt;The friendly name of the provider.&lt;/param&gt;
+    /// &lt;param name="config"&gt;web.config configuration params&lt;/param&gt;*@
+    public override void Initialize(string name, NameValueCollection config)
+    {
+        ConnectionStringName = config["connectionStringName"];
+        ConnectionUsername = config["connectionUsername"];
+        ConnectionPassword = config["connectionPassword"];
+        ConnectionAdminQuery = config["connectionAdminQuery"]; //Custom FieldName set in the web.config
+        ConnectionIPServer = config["connectionIPServer"]; //Custom FieldName set in the web.config
+        ConnectionAdminGroup = config["connectionAdminGroup"]; //Custom FieldName set in the web.config
+        AttributeMapUsername = config["attributeMapUsername"];
+        base.Initialize(name, config);
+    }
+        </pre>
+    </p>
+    <div class="well">
+        <strong>Comments:</strong> The Custom FieldName properties set in the Initialize method and web.config configuration could be changed to your own parameters.
+    </div>  
+    <h4>Two Approaches implemented on MVC4 & MVC5 to Customize the RoleProvider</h4>
+    <p>
+        <strong>1.- System.DirectoryServices</strong>:<br />
+        The <a href="http://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.100).aspx">System.DirectoryServices</a> namespace provides easy access to Active
+        Directory Domain Services from managed code. The namespace contains two component classes, <strong>DirectoryEntry</strong> and <strong>DirectorySearcher</strong>,
+        which use the Active Directory Services Interfaces (ADSI) technology. ADSI is the set of interfaces that Microsoft provides as a flexible tool for working with
+        a variety of network providers. ADSI gives the administrator the ability to locate and manage resources on a network with relative ease, regardless of the size of the network.
+        This approach lets do anythings but it's more technical, for example to access to Active Directory properties values, are all them are storage in array which can represent
+        its own problems and involve more iterations or use a casting.<br /><br />
+        Example: <strong>"GetRolesForUser"</strong> implementation, using this approach the filter query <strong>"connectionAdminQuery"</strong> is defined as LDAP 
+        query to search if the current user authenticated is "Admin".
+        <pre class="prettyprint">
+    public override string[] GetRolesForUser(string username)
+    {
+        var allRoles = new List&lt;string&gt;();
+        allRoles.Add("User");
+        //create DirectoryEntry
+        using (DirectoryEntry objDirectoryEntry = new DirectoryEntry(WebConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString,
+                                                                     ConnectionUsername, ConnectionPassword))
+        {
+            //Search on Directory
+            using (DirectorySearcher objDirectorySearch = new DirectorySearcher(objDirectoryEntry))
+            {
+                objDirectorySearch.Filter = string.Format(ConnectionAdminQuery, username);
+                objDirectorySearch.SearchScope = SearchScope.Subtree;
+                SearchResultCollection objSearchResults = objDirectorySearch.FindAll();
+                if (objSearchResults != null && objSearchResults.Count > 0)
+                    allRoles.Add("Admin");
+            }
+        }
+        return allRoles.ToArray();
+    }
+        </pre>
+    </p>
+    <br />
+    <p>
+        <strong>2.- System.DirectoryServices.AccountManagement</strong>:<br />
+        The <a href="http://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement(v=vs.90).aspx">System.DirectoryServices.AccountManagement</a> namespace
+        provides uniform access and manipulation of user, computer, and group security principals across the multiple principal stores: Active Directory Domain Services (AD DS),
+        Active Directory Lightweight Directory Services (AD LDS), and Machine SAM (MSAM). System.DirectoryServices.AccountManagement manages directory objects independent of
+        the System.DirectoryServices namespace.<br />
+        The approach was designed to make managing AD through .NET much easier. The properties are exposed directly within the classes.<br /><br />
+        Example: <strong>"GetRolesForUser"</strong> implementation, using this approach the parameter <strong>"connectionAdminGroup"</strong> is defined to search if the 
+        <strong>"AdminGroup"</strong> group contains the current user authenticated.
+    <pre class="prettyprint">
+    public override string[] GetRolesForUser(string username)
+    {
+        var allRoles = new List&lt;string&gt;();
+        allRoles.Add("User");
+        //create PrincipalContext (The connection to AD)
+        using (PrincipalContext principalContext = string.IsNullOrEmpty(ConnectionIPServer) ?
+                                                   new PrincipalContext(ContextType.Domain)
+                                                   : new PrincipalContext(ContextType.Domain, ConnectionIPServer, ConnectionUsername, ConnectionPassword))
+        {
+            //Get the user on PrincipalContext
+            Principal userAD = Principal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);                
+            GroupPrincipal groupAD = GroupPrincipal.FindByIdentity(principalContext, ConnectionAdminGroup);
+            if (userAD != null && groupAD != null && groupAD.GetMembers().Contains(userAD))
+                allRoles.Add("Admin");
+        }
+        return allRoles.ToArray();
+    }
+        </pre>
+    </p>
+    <br />
+    <p>
+        <strong>3.- Using both approaches</strong>:<br />
+        The ShowCase implements both approaches in the <strong>"GetRolesForUser"</strong> implementation using the configuration parameters,<br /><br />
+        IF <strong>"connectionAdminQuery"</strong> is defined THEN the first approach is used to determinate the corresponding role using the LDAP query filter<br />
+        ELSE IF <strong>"connectionAdminGroup"</strong> is defined THEN the second approach is used to determinate the corresponding role using the Group Name.
+        <pre class="prettyprint">
+    public override string[] GetRolesForUser(string username)
+    {
+        var allRoles = new List&lt;string&gt;();
+        allRoles.Add("User");
+        if (!string.IsNullOrEmpty(ConnectionAdminQuery))
+        {
+            using (DirectoryEntry objDirectoryEntry = new DirectoryEntry(WebConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString, 
+                                                                         ConnectionUsername, ConnectionPassword))
+            {
+                using (DirectorySearcher objDirectorySearch = new DirectorySearcher(objDirectoryEntry))
+                {
+                    objDirectorySearch.Filter = string.Format(ConnectionAdminQuery, username);
+                    objDirectorySearch.SearchScope = SearchScope.Subtree;
+                    SearchResultCollection objSearchResults = objDirectorySearch.FindAll();
+                    if (objSearchResults != null && objSearchResults.Count > 0)
+                        allRoles.Add("Admin");
+                }
+            }
+        }
+        else if (!string.IsNullOrEmpty(ConnectionAdminGroup))
+        {
+            using (PrincipalContext principalContext = string.IsNullOrEmpty(ConnectionIPServer) ?
+                                                       new PrincipalContext(ContextType.Domain)
+                                                       : new PrincipalContext(ContextType.Domain, ConnectionIPServer, ConnectionUsername, ConnectionPassword))
+            {
+                Principal userAD = Principal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);                
+                GroupPrincipal groupAD = GroupPrincipal.FindByIdentity(principalContext, ConnectionAdminGroup);
+                if (userAD != null && groupAD != null && groupAD.GetMembers().Contains(userAD))
+                    allRoles.Add("Admin");
+            }
+        }
+        return allRoles.ToArray();
+    }
+        </pre>
+        <br />
+        It 's possible to obtain additional information from Active Directory that are not exposed by AccountManagement.
+        Using <a href="http://stackoverflow.com/questions/4802533/ldap-manager-attribute">.GetUnderlyingObject()</a> it is possible to cast a "Principal" object to a 
+        "DirectoryEntry" object, so that we can access to its properties array.
+        <br /><br />
+        Example: <strong>"GetAllRoles"</strong> implementation mixed the both approaches to get all groups for user authenticated, in this case we don't use any query filter.
+        <pre class="prettyprint">
+    public override string[] GetAllRoles()
+    {
+        var allRoles = new List&lt;string&gt;();
+        var username = HttpContext.Current.User.Identity.Name;
+        using (PrincipalContext principalContext = string.IsNullOrEmpty(ConnectionIPServer) ?
+                                                   new PrincipalContext(ContextType.Domain)
+                                                   : new PrincipalContext(ContextType.Domain, ConnectionIPServer, ConnectionUsername, ConnectionPassword))
+        {
+            //Get the user on PrincipalContext
+            Principal userAD = Principal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);   
+            //Get the DirectoryEntry from Principal
+            DirectoryEntry userEntry = userAD.GetUnderlyingObject() as DirectoryEntry;
+            object objGroups = userEntry.Invoke("Groups");
+            foreach (object oGroup in (IEnumerable)objGroups)
+            {
+                //Create object for each group
+                DirectoryEntry objGpEntry = new DirectoryEntry(oGroup);
+                groupsAD.Add(objGpEntry.Name);
+            }
+        }
+        return groupsAD.ToArray();
+    }
+        </pre>
+    </p>
+}
+

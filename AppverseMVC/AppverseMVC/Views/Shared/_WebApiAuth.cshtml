@@ -1,0 +1,94 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Authentication and authorization</h3>
+<p>
+    This service requeres an authenticated user for all operations except Get operation. The mechanism to enable authentication and authorization is the same than for MVC pages.
+</p>
+<p>
+    This shsowcase is configured to use ASP.NET Identity (formerly known as ASP.NET membership) for user authentication.
+    ASP.NET Identity enables a user to register an account, by creating a username and password on the site or by signing in with social providers such as Facebook, Google, Microsoft Account, or Twitter.
+    The default data store for user profiles in ASP.NET Identity is a SQL Server database, which you can be deployed to SQL Server or Windows Azure SQL Database for the production site.
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <h4>Concepts</h4>
+    <p>
+        Authentication is knowing the identity of the user.
+    </p>
+    <p>
+        Authorization is deciding whether a user is allowed to perform an action.
+    </p>
+    <p>
+        The Authentication and authorization work in the same way than for MVC pages.
+    </p>
+    <p>
+        To restrict access for a specific controller, add filters as here:
+    </p>
+
+    <p>
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+<pre class="prettyprint">
+        // Require authorization for all actions on the controller.
+        [Authorize]
+        public class ValuesController : ApiController
+        {
+            // Allow anonymous for this method
+            [AllowAnonymous]
+            public HttpResponseMessage Get() { ... }
+            // Restrict by role
+            [Authorize(Roles="Admins")]
+            public HttpResponseMessage Post() { ... }
+            // Restrict by user
+            [Authorize(Users="Admin,User1")]
+            public  HttpResponseMessage Post() { ... }
+            // Uses the authorization defined in the controller level
+            public HttpResponseMessage Delete() { ... }
+        }
+</pre>
+    </p>
+
+    <p>
+        For more information go to this link:
+        <a href="http://www.asp.net/web-api/overview/security/authentication-and-authorization-in-aspnet-web-api">Authentication and Authorization in ASP.NET Web API</a>.
+    </p>    
+
+    <h4>Alternatives</h4>
+    <h5>Basic Authentication</h5>
+    <p>
+        Basic authentication works as follows:
+    </p>
+    <p>
+        If a request requires authentication, the server returns 401 (Unauthorized). The response includes a WWW-Authenticate header, indicating the server supports Basic authentication.
+        The client sends another request, with the client credentials in the Authorization header. The credentials are formatted as the string “name:password”, base64-encoded. The credentials are not encrypted.
+        Read more here: <a href="http://www.asp.net/web-api/overview/security/basic-authentication">Basic Authentication</a>.
+
+    </p>
+    <h5>Authenticate a web API using individual user accounts</h5>
+    <a href="http://www.asp.net/vnext/overview/authentication/individual-accounts-in-aspnet-web-api">Individual Accounts in ASP.NET Web API </a>
+
+
+
+
+}
+

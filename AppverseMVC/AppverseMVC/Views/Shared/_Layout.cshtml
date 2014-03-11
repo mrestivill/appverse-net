@@ -1,0 +1,112 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+
+    <script>
+        @*todo: http://www.west-wind.com/weblog/posts/2012/Nov/08/HTML5-Input-typedate-Formatting-Issues
+        http://stackoverflow.com/questions/16890376/chrome-type-date-and-jquery-ui-date-picker-clashing*@
+        @*todo: http://stackoverflow.com/questions/494958/how-do-i-localize-the-jquery-ui-datepicker*@
+            if (!Modernizr.inputtypes.date) {
+                $(function () {
+                    $('input[type=date]').datepicker({
+                        dateFormat: 'yy-mm-dd',
+                    });
+                });
+            }
+
+        @*////Set up the yepnope (Modernizr.load) directives...
+        Modernizr.load([
+        {
+            // Test if Input Range is supported using Modernizr
+            test: Modernizr.inputtypes.date,
+            // If ranges are not supported, load the slider script and CSS file
+            nope: 'aa.js',
+            callback: function () {
+                if (!Modernizr.inputtypes.date) {
+                    $(function () {
+                        $('input[type=date]').datepicker();
+                        dateFormat:  'yy-mm-dd';
+                    });
+                }
+            }
+        }
+        ]);*@
+    </script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @*@Html.ActionLink("Appverse#", "Index", "Home", new { area = "", id = "" }, new { @class = "navbar-brand" })*@
+                <a class="navbar-brand-img" href="@Url.Action("Index", "Home", new { area = "", id = "" })">
+                    <img src="@Url.Content("~/Images/logo.png")" />
+                </a>
+
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink(Localization.Layout.Resources.Home, "Index", "Home", new { area = "", id = "" }, null)</li>
+                    <li>@Html.ActionLink(Localization.Layout.Resources.MyItems, "Index", "Items", new { area = "", id = "" }, null)</li>
+                    <li>@Html.ActionLink(Localization.Layout.Resources.WebApi, "WebAPIOperations", "Items", new { area = "", id = "" }, null)</li>
+                    <li>@Html.ActionLink(Localization.Layout.Resources.Contact, "Contact", "Home", new { area = "", id = "" }, null)</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <script src="~/Scripts/globalize/globalize.js"></script>
+        <script src="~/Scripts/globalize/cultures/globalize.culture.@(System.Globalization.CultureInfo.CurrentCulture.Name).js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                Globalize.culture('@(System.Globalization.CultureInfo.CurrentCulture.Name)');
+            });
+        </script>
+
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - appverse</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

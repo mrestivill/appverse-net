@@ -1,0 +1,191 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Inversion of control and Dependency Injection</h3>
+<p>There are a few different ways to integrate a container with Web API, but as Castle Windsor uses the Resolve-Release pattern, we have used the Dependency Scopes built in to WebAPI as it supports releasing dependencies in a graceful way and it works under both IIS and self-hosting.</p>
+<p>The key interfaces are IDependencyResolver and IDependencyScope which serve as the main integration points into the Web API.</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <p>Be careful with the IDependencyResolver, in Web API it is not the same as the one in MVC, they use the same interface name but the namespaces are different. The same happens with other interfaces.</p>
+    <p>The IDependencyResolver interface is used to resolve everything outside a request scope. If the resolver returns null, then the default implementation is used. So all the infrastructural interfaces of WebApi are resolved using this interface.</p>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <pre class="prettyprint">
+    internal class WindsorDependencyResolver : IDependencyResolver
+    {
+        private readonly IKernel container;
+        /// &#60;summary>
+        /// Initializes a new instance of the &#60;see cref="WindsorDependencyResolver" /> class.
+        /// &#60;/summary>
+        /// &#60;param name="container">The container.&#60;param>
+        public WindsorDependencyResolver(IKernel container)
+        {
+            this.container = container;
+        }
+        /// &#60;summary>
+        /// Starts a resolution scope.
+        /// &#60;/summary>
+        /// &#60;returns>
+        /// The dependency scope.
+        /// &#60;/returns>
+        public IDependencyScope BeginScope()
+        {
+            return new WindsorDependencyScope(this.container);
+        }
+        /// &#60;summary>
+        /// Retrieves a service from the scope.
+        /// &#60;/summary>
+        /// &#60;param name="serviceType">The service to be retrieved.&#60;/param>
+        /// &#60;returns>
+        /// The retrieved service.
+        /// &#60;/returns>
+        public object GetService(Type serviceType)
+        {
+            System.Diagnostics.Debug.WriteLine("IDependencyResolver " + serviceType.FullName);
+            return this.container.HasComponent(serviceType) ? this.container.Resolve(serviceType) : null;
+        }
+        /// &#60;summary>
+        /// Retrieves a collection of services from the scope.
+        /// &#60;/summary>
+        /// &#60;param name="serviceType">The collection of services to be retrieved.&#60;/param>
+        /// &#60;returns>
+        /// The retrieved collection of services.
+        /// &#60;/returns>
+        public IEnumerable&#60;object> GetServices(Type serviceType)
+        {
+            System.Diagnostics.Debug.WriteLine("IDependencyResolver " + serviceType.FullName);
+            return this.container.ResolveAll(serviceType).Cast&#60;object>();
+        }
+        
+        /// &#60;summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// &#60;/summary>
+        public void Dispose()
+        {
+        }
+    }
+    </pre>
+    <p>
+        The dependency scope is implemented by IDependencyScope. At the end of the request, the dependency scope is disposed. This allow us to implement the Resolve / Release pattern using Castle Windsor.
+        When this object is disposed, the scope is ended and Castle will then release all the objects with Scoped lifestyle that have been resolved in the same call stack after the scope is generated.
+    </p>
+    <pre class="prettyprint">
+    public class WindsorDependencyScope : IDependencyScope
+    {
+        private readonly IKernel container;
+        private readonly IDisposable scope;
+        public WindsorDependencyScope(IKernel container)
+        {
+            this.container = container;
+            this.scope = container.BeginScope();
+        }
+        
+        public object GetService(Type serviceType)
+        {
+            return this.container.HasComponent(serviceType) ? this.container.Resolve(serviceType) : null;
+        }
+        
+        public IEnumerable&#60;object> GetServices(Type serviceType)
+        {
+            return this.container.ResolveAll(serviceType).Cast&#60;object>();
+        }
+        
+        public void Dispose()
+        {
+            this.scope.Dispose();
+        }
+    }
+    </pre>
+
+    <p>Now we need to replace the default dependency resolver called WindsorDependencyResolver in global.asax </p>
+
+    <pre class="prettyprint">
+        private static void BootstrapContainer()
+        {
+            container = new WindsorContainer()
+                .Install(FromAssembly.This()).Install(FromAssembly.Containing(typeof(CultureHelper)))
+                .Install(Configuration.FromAppConfig());
+
+            <b>// RegisterDependencyResolver for Web API
+            GlobalConfiguration.Configuration.DependencyResolver = new WindsorDependencyResolver(container.Kernel);</b>
+        
+            var controllerFactory = new WindsorControllerFactory(container.Kernel);
+            ControllerBuilder.Current.SetControllerFactory(controllerFactory);
+        }
+    </pre>
+
+    <p>Finally we can install our dependences and Controllers. The Controllers need to be registered with a lifestyle scope to make sure that they are released at the end of the request when the dependency scope ends.</p>
+    <pre class="prettyprint">
+        /// &#60;summary>
+        /// Performs the installation in the &#60;see cref="T:Castle.Windsor.IWindsorContainer" />.
+        /// The Web API Controllers need to be registered with a Scoped lifestyle to make sure that they
+        /// will get released at the end of the request when the dependency scope ends.
+        /// &#60;/summary>
+        /// &#60;param name="container">The container.&#60;param>
+        /// &#60;param name="store">The configuration store.&#60;/param>
+        public void Install(IWindsorContainer container, IConfigurationStore store)
+        {
+            container.Register(Classes.FromThisAssembly().BasedOn&#60;apicontroller>().LifestyleScoped());
+        }
+    </pre>
+    <p>After registering in Windor Container the Persistence and Logger classes in the same way than for MVC pattern, we are ready to use dependency injection. Here you can see piece of code of the Web API controller:</p>
+
+    <pre class="prettyprint">
+        [Authorize]
+        public class ItemsCRUDController : ApiController
+        {
+            // this is Castle.Core.Logging.ILogger, not log4net.Core.ILogger
+            public ILogger Logger { get; set; }
+            public IItemRepository Repository { get; set; }
+        
+            /// &#60;summary>
+            /// GET api/itemsCRUD
+            /// It uses a server side cache and it is differen for each user
+            /// &#60;/summary>
+            /// &#60;returns>returns all itemps&#60;returns>
+            [AllowAnonymous]
+            public IEnumerable&#60;item> Get()
+            {
+                Logger.InfoFormat("Get operation");
+                return Repository.GetPage&#60;item>(0).Items.ToArray&#60;item>();
+            }
+            // GET api/itemsCRUD/5
+            public Item GetItem(int id)
+            {
+                Logger.InfoFormat("Get(" + id.ToString() + ") operation");
+                Item item = Repository.Get&#60;item>(id);
+                if (item == null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound);
+                }
+                return item;
+            }
+        }
+    </pre>
+
+    <p>This Controller contains two operations Get and GetItem, both only contain two lines:</p>
+    <p>- The first one writes to the Logger</p>
+    <p>- And the second one reads from database</p>
+    <p>To use the Repository and Logger class, you only need to declare them as public properties, Castle Windsor does the rest.</p>
+    <br />
+    <p>Note: The only problem we have detected and we have pending to resolve is using Dependency injection in Attributes and annotation classes of Web API.</p>
+}

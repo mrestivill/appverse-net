@@ -1,3 +1,11 @@
 AppverseMVC/AppverseCore/bin/
-AppverseMVC/AppverseCore/obj/Debug/Appverse.Core.csproj.FileListAbsolute.txt
 AppverseMVC/AppverseCore/obj/
+AppverseMVC/AppverseMVC.Tests/bin/
+AppverseMVC/AppverseMVC.Tests/obj/
+AppverseMVC/AppverseMVC/obj/
+AppverseMVC/Localization/obj/
+AppverseMVC/Localization/bin/
+AppverseMVC/AppverseWebCore/obj/
+AppverseMVC/AppverseWebCore/bin/
+AppverseMVC/AppverseMVC/log/
+AppverseMVC/AppverseMVC/bin/

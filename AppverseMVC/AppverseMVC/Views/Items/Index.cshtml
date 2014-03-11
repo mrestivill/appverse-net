@@ -1,0 +1,228 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+@using Appverse.Core.Repositories;
+@using Appverse.Web.Models;
+@model Page<Appverse.Web.Models.Item>
+
+
+@{
+    ViewBag.Title = "Appverse Web# MVC Showcase";
+    ViewBag.Submenu = 1;
+}
+
+@Html.Partial("_menu")
+
+<div class="well">
+    <fieldset>
+        <legend>Table</legend>
+        <p>
+            In the business layer there is a pagination server side control that only is querying to the repository the items that are showed in the screen. When clicking Next or Previous, all page is reloaded.<br />
+            Database operations are performed using NHibernate as a ORM.<br />
+            Dependency Injection is used to obtain the Session in each http request.<br />
+        </p>
+        <p>CRUD operations. When changing culture, the format of the dates and numbers changes.</p>
+    </fieldset>
+</div>
+
+@if (ViewBag.HelpPage.SummaryMode == true)
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <tr>
+                @{Dictionary<string, string> dbColumns = new Dictionary<string, string>();
+                dbColumns.Add("Id", "Id");
+                dbColumns.Add("Title", Localization.Model.Item.Title);
+                dbColumns.Add("Description", Localization.Model.Item.Description);
+                dbColumns.Add("Moment", Localization.Model.Item.When);
+                dbColumns.Add("Location", Localization.Model.Item.Where);
+                dbColumns.Add("Value", Localization.Model.Item.Value);
+                bool direction = Request["direction"] != null ? bool.Parse(Request["direction"]) : true;
+                string criteria = Request["criteria"] != null ? Request["criteria"] : string.Empty;
+                }
+                @foreach (KeyValuePair<string, string> column in dbColumns)
+                {
+                    string cssTh;
+                    if (column.Value == "Id") { cssTh = "hidden-xs"; }
+                    else if (column.Value == Localization.Model.Item.Description) { cssTh = "hidden-xs"; }
+                    else if (column.Value == Localization.Model.Item.Where) { cssTh = "hidden-xs"; }
+                    else { cssTh = ""; }
+
+                    <th class='@cssTh'>
+
+                        @{string title = column.Value;}
+                        @if (column.Key == criteria)
+                        {
+                            title = direction ? title + "▲" : title + "▼";
+                            direction = !direction;
+                        }
+                        @Html.ActionLink(title, "Index", new { page = 1, criteria = column.Key, direction = direction })
+                    </th>
+                }
+                <th></th>
+            </tr>
+
+
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td class="hidden-xs">
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td class="hidden-xs">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+
+                    <td>
+                        @*We do not use Html.DisplayFor because there are problems with dates, as HTML5 forces dates to yyy-mm-dd, using Html.DisplayFor would be displayed in this format and not as it is defined in locale
+                            @Html.DisplayFor(modelItem => @item.Moment)*@
+                        @item.Moment.ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)
+                    </td>
+                    <td class="hidden-xs">
+                        @Html.DisplayFor(modelItem => item.Location.Name)
+                    </td>
+                    <td>
+                        @item.Value.ToString("F")
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+
+        </table>
+        <div>
+            <ul class="pager">
+
+                <li>
+                    @if (Model.PageNumber > 1)
+                    {
+                        @Html.ActionLink("Previous", "Index", new { id = Model.PageNumber - 1, criteria = Request["criteria"], direction = Request["direction"] })
+                    }
+                    @*else
+                        {
+                            @:Previous
+                        }*@
+                </li>
+                <li>
+                    @if (Model.PageNumber * Model.PageSize < Model.TotalItemsCount)
+                    {
+                        @Html.ActionLink("Next", "Index", new { id = Model.PageNumber + 1, criteria = Request["criteria"], direction = Request["direction"] })
+                    }
+                    @*else
+                        {
+                            @:Next
+                        }*@
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="well">
+        @using (Html.BeginForm("SearchEdit", null, FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            <fieldset>
+                <legend>Cached autocomplete textbox</legend>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.Hidden("Id")
+                                @Html.Label("Search and Edit an Item", new { @class = "col-lg-4 control-label" })
+                                <div class="col-lg-8">
+                                    @Html.TextBox("ItemName", "", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12 col-lg-offset-4">
+                                    <input type="submit" value="Edit" class="btn btn-default" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <span class="help-block">
+                            This section contains a jquery autocomplete text box.<br />
+                            Data is cached on server side and it is different for each logged user. This can be programmed and configured on the server side. When enabling caching, by default, all requests would use the same caching data.
+                        </span>
+                    </div>
+                </div>
+
+            </fieldset>
+        }
+    </div>
+}
+
+@section Scripts {
+    @if (ViewBag.HelpPage.SummaryMode == true)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                function prepareAutocomplete() {
+                    $("#ItemName").autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: "/Items/AutoCompleteItem",
+                                type: "POST",
+                                dataType: "json",
+                                data: { term: request.term },
+                                success: function (data) {
+                                    response($.map(data, function (item) {
+                                        return { label: item.label, value: item.value, moreDetails: item.moreDetails };
+                                    }));
+
+                                }
+                            });
+                        },
+                        select: function (item, ui) {
+                            $('#ItemName').val(ui.item.label);
+                            $('#Id').val(ui.item.value);
+                            return false;
+                        },
+                    }
+                    ).data("ui-autocomplete")._renderItem = function (ul, item) {
+                        return $("<li>")
+                       .append("<a>" + item.label + " <small class='text-info'>" + item.moreDetails + "</small></a>")
+                       .appendTo(ul);
+                    };
+                }
+                prepareAutocomplete();
+            });
+        </script>
+    }
+}
+<div id="partialSection">
+    @Html.Partial((string)ViewBag.HelpPage.Page)
+</div>
+
+
+

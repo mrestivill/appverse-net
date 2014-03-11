@@ -1,0 +1,79 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Authentication and authorization</h3>
+<p>
+    This shsowcase is configured to use ASP.NET Identity (formerly known as ASP.NET membership) for user authentication. ASP.NET Identity enables a user to register an account, 
+    by creating a username and password on the site or by signing in with social providers such as Facebook, Google, Microsoft Account, or Twitter. The default data store 
+    for user profiles in ASP.NET Identity is a SQL Server database, which you can be deployed to SQL Server or Windows Azure SQL Database for the production site.
+</p>
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <h4>Concepts</h4>
+    <p>
+        Authentication is knowing the identity of the user.       
+    </p>
+    <p>
+        Authorization is deciding whether a user is allowed to perform an action.
+    </p>
+
+    <h4>Individual Accounts in ASP.NET</h4>
+    <p>
+        This tutorial shows how to authenticate individual user accounts that are managed in a SQL Server database.
+    </p>
+<p>
+    According to Microsoft, in Visual Studio 2013 these features are the same as in Visual Studio 2012, but the underlying code for the ASP.NET membership system has been rewritten. 
+    Advantages of the new code base include the following:
+<ul>
+    <li>
+        The new membership system is based on OWIN rather than the ASP.NET Forms
+        Authentication module. This means that you can use the same authentication
+        mechanism whether you're using Web Forms or MVC in IIS, or you're
+        self-hosting Web API or SignalR.
+    </li>
+    <li>
+        The new membership database is managed by Entity Framework Code First,
+        and all of the tables are represented by entity classes that you can
+        modify. This means that you can easily customize the database schema and
+        profile-related web UI to fit your own needs, and you can easily deploy
+        your updates using Code First Migrations.
+    </li>
+    <li>
+        The new membership system is implemented automatically in the new
+        templates, and it can be implemented manually in any project that targets
+        .NET 4.5 or later.
+    </li>
+</ul>
+</p>
+<p>
+    In these links, you can check current registered <a href="/AccountsManager/Accounts/Index">users</a>
+    and <a href="/AccountsManager/Accounts/UserRoles/admin">roles for each user</a>. You can add new roles but this application only uses the Admin and User roles.
+    <b>Note:</b> To view these pages you need to be logged with a user having admin rights. <b>(Default administration user: Admin/admin123 or default user: User/user123)</b>
+</p>
+<p>
+    <a class="btn btn-default" href="http://blogs.msdn.com/b/webdev/archive/2013/10/16/customizing-profile-information-in-asp-net-identity-in-vs-2013-templates.aspx">Learn more…</a>
+</p>
+<p>
+    http://www.asp.net/identity/overview/getting-started/introduction-to-aspnet-identity
+</p>
+}
+

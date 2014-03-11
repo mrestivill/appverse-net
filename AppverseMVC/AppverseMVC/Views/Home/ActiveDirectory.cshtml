@@ -1,0 +1,65 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+@{
+    ViewBag.Title = "Active Directory";
+}
+<div class="well">
+    <h1>@ViewBag.Title</h1>
+    <h2>Authentication and authorization using Active Directory</h2>
+    <p>
+        The objective of Appverse Web# is to become a Framework and a guideline to develop ASP.NET Web Applications. These showcases implement a Custom Authentication using Active Directory,
+        with MembershipProvider and RoleProvider.
+    </p>
+</div>
+
+<div class="well">
+    <fieldset>
+        <legend>MVC4 - Active Directory Authentication: Membership & RoleProvider</legend>
+        <p>
+            This Showcase shows how to use the ASP.NET membership feature with multiple Active Directory domains. It shows how to configure
+            an <a href="http://msdn.microsoft.com/en-us/library/system.web.security.activedirectorymembershipprovider(v=vs.100).aspx" target="_blank">ActiveDirectoryMembershipProvider</a>
+            for each domain and the corresponding connection strings. It also shows how to get an instance of
+            <a href="http://msdn.microsoft.com/en-us/library/system.web.security.membershipprovider(v=vs.110).aspx" target="_blank">MembershipProvider</a>
+            corresponding to a specific domain and how to call membership APIs, such as ValidateUser, through the relevant provider.
+        </p>
+        <a class="btn btn-primary btn-large" href="@ViewBag.mvc4Link" target="_blank">Go to the showcase more &raquo;</a>
+    </fieldset>
+</div>
+
+<div class="well">
+    <fieldset>
+        <legend>MVC5 - Windows Authentication: Single Sign On (SSO) & RoleProvider</legend>
+        <p>
+            This Showcase implements Single Sign On & Custom RoleProvider to authenticate the current user and get the roles from Active Directory Provider.
+            Windows Authentication authenticates using Windows accounts, so you do not need to write any custom authentication code.
+        </p>
+        <a class="btn btn-primary btn-large" href="@ViewBag.mvc5Link" target="_blank">Go to the showcase more &raquo;</a>
+    </fieldset>
+</div>
+
+<hr />
+<h2>Main topics covered in this section</h2>
+<hr />
+<div id="partialSection">
+    @Html.Partial((string)ViewBag.HelpPage.Page)
+</div>

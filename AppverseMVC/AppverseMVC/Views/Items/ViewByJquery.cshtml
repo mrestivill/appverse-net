@@ -1,0 +1,79 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+@{
+    ViewBag.Title = "Appverse Web# MVC Showcase";
+    ViewBag.Submenu = 3;
+}
+
+@Html.Partial("_menu")
+
+<div class="well">
+    <fieldset>
+        <legend>Table</legend>
+        <p>
+            In the business layer there is a pagination server side control that only is querying to the back end layer for the items that are showed in the screen. The data is returned using json and reloaded asynchronously using jquery.<br />
+            Database operations are performed using NHibernate as a ORM.<br />
+            Dependency Injection is used to obtain the Session in each http request.<br />
+            <strong>Javascript-Pattern,</strong> the pattern applied in this show case is "The Revealing Prototype Pattern", combines the Prototype and Revealing Module patterns, encloses both the object's properties and methods in one construct, we can define private object members by creating local variables using the var keyword.
+        </p>
+    </fieldset>
+</div>
+
+<p></p>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div class="table-responsive">
+    <table id="tbItems" class="table table-striped table-bordered table-hover">
+        <tr id="trHeader"></tr>
+    </table>
+    <table>
+        <tr id="trFooter"></tr>
+    </table>
+</div>
+
+<div id="partialSection">
+    @Html.Partial((string)ViewBag.HelpPage.Page)
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/json2.js"></script> @*http://stackoverflow.com/questions/552135/difference-between-json-js-and-json2-js*@
+    <script src="~/Scripts/jqueryTable.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            classItems.initClassParams({
+                idTable: 'tbItems',
+                idHeader: 'trHeader',
+                idFooter: 'trFooter',
+                dbColumns: ["Id", "Title", "Description", "Moment", "Location", "Value"],
+                columns: ["Id", "@Localization.Model.Item.Title", "@Localization.Model.Item.Description", "@Localization.Model.Item.When", "@Localization.Model.Item.Where", "@Localization.Model.Item.Value"],
+                controler: "Items",
+                url: '@Url.Action("GetItems", "Items")'
+            });
+            classItems.formatBody(1);
+        });
+    </script>
+}
+
+

@@ -1,0 +1,136 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Technical landscape</h3>
+
+<p>
+    The objective of Appverse Web # is to become a Framework and a guideline to develop ASP.NET Web Applications. It leverages years of real-world experience in developing Web Applications
+    and it is built on top of best-of-breed open source stacks and using standards on each layer.
+</p>
+
+<p>
+    Appverse Web# aims to cover the main important points when developing an Enterprise Web Application. It combines technologies as ASP.NET MVC, HTML5, CSS, JavaScript, Bootstrap, JQuery,
+    Castle Windsor, NHibernate, Entity Framework, Modernizer, JSON2. It adds functionalities as globalization, logging, security, services or responsive layout between many others.
+</p>
+<p>
+
+    @if (ViewBag.HelpPage.SummaryMode == false)
+    {
+        <h4>ASP.NET MVC</h4>
+    <p>
+        ASP.NET MVC is a free Microsoft framework to develop web applications using the Model-View-Controller pattern. It provides total control over your HTML and URLs, enables rich Ajax integration,
+        and facilitates test driven development. It is used in the presentation layer and it allows to be combined with  HTML5, CSS or JavaScript technologies as Bootstrap, JQuery, Modernizr,...
+    </p>
+        <h4>Responsive layout using Bootstrap framework</h4>
+        <p>
+            It is a framework to design html pages that provides an optimal viewing, reading and navigation across a wide range of devices (from mobile phones to desktop computer monitors). The layout of the screen is adapted to the size of the browser screen.
+        </p>
+        <h4>Globalization</h4>
+        <p>
+            Globalization is the process of designing and developing a software product that functions in multiple cultures/locales. This process involves identifying the culture that must be supported,
+            input, validate, display, formatting, and output according to the different supported cultures.
+        </p>
+        <h4>Security</h4>
+        <p>
+            Appverse makes use and extends all security API provided by Microsoft related with authentication authorization and protections as Cross-Site Scripting and Cross Site Request Forgery.<br />
+            <b>Cross-Site Scripting</b>: When you need to post HTML back to your model, don’t use ValidateInput(false) to turn off Request Validation. Simply add [AllowHtml] to your model property<br />
+            <b>Cross Site Request Forgery</b>: ASP.NET MVC contains its own set of built-in helpers that protect against CSRF using unique tokens passed in with the request. The helpers use not only a required hidden form field but also a cookie value, making it quite a bit more difficult to forge a request. These protections are easy to implement and absolutely essential to incorporate into your applications.
+        </p>
+
+        <h4>Authentication and authorization</h4>
+        <p>
+            This showcase is configured to use ASP.NET Identity (formerly known as ASP.NET membership) for user authentication. ASP.NET Identity enables a user to register an account,
+            by creating a username and password on the site or by signing in with social providers such as Facebook, Google, Microsoft Account, or Twitter. The default data store
+            for user profiles in ASP.NET Identity is a SQL Server database, which you can be deployed to SQL Server or Windows Azure SQL Database for the production site.
+        </p>
+        <h4>Inversion of control container</h4>
+        <p>
+            Appverse makes use of Castle Windsor to provide IoC container, dependency injection and interceptors functionality. With an IoC container, classes do not need to create,
+            destroy or configure the classes they depend on. This is managed transparently by Castle Windsor  Container. This reduces coupling and simplifies reuse and testability.
+        </p>
+        <h4>Interceptors</h4>
+        <p>
+            It is possible to alter the behavior of required objects transparently providing pre/post processing and many other things as caching, logging, transactions or profiling.
+            We have developed 4 generic interceptors: LogInterceptor, ExceptionInterceptor, TransactionInterceptor and CachingIntercetor.<br />
+        </p>
+        <h4>Dependency injection</h4>
+        <p>
+            Persistence layer with NHibernate and logging functionality with Log4net are configured to be used in this way.
+            It is a good practice that allows the declaration and initialization of classes and objects we use constantly and at different places.
+        </p>
+        <h4>Persistence layer</h4>
+        <p>
+            Databases connection is done using ORM NHibernate and Entity Framework. But when possible, we recommend to use NHibernate as a default ORM, mainly when using Castle Windsor as a Container and Dependency
+            Injection. As can be observed in this project, it is possible to combine both ORM in the same project.  We are using ADO.NET Entity Framework for users and roles. In next releases we plan to change the way we
+            use ADO.NET Entity Framework to add Integration of Dependency Injection using Castle Windsor.
+        </p>
+        <p>
+            In this showcase we have implemented a Repository interface with <b>Server Side Pagination</b> to avoid issues when there are a large number of items.
+        </p>
+
+        <p>If there is the requirement to use a MicroORM or a SQL Object Mapper, we recommend Dapper</p>
+
+        <h4>Logging</h4>
+        <p>
+            Castle Windsor comes with an optional facility called logging facility. This facility provides common abstraction for logging frameworks such
+            as Log4net and NLog frameworks. Currently, this show case is configured to use Log4Net.
+        </p>
+
+        <h4>Transaction demarcation</h4>
+        <p>.NET Frameworks allows explicit transaction demarcation, for distributed transactions as well as single-resource transactions. We have made tests using nHibernate and Entity framework in the same transaction and it was possible to rollback all changes.</p>
+        <p></p>
+        <h4>REST Services</h4>
+        <p>
+            This showcase implements a REST service using ASP.NET Web API and implements the default CRUD operations "Create, Read, Update, and Delete".
+            The service returns XML or JSON data depending on the request and implements authentication and authorization, security patterns as Cross-Site Request
+            Forgery and Anti-Forgery Token, Dependency injection for database and logging operations.
+        </p>
+        <h4>Improving Performance with Output Caching</h4>
+        <p>
+            You can improve the performance of an ASP.NET MVC application by taking advantage of the output cache. The output cache enables you to cache the content returned by a controller action.
+            That way, the same content does not need to be generated each and every time the same controller action is invoked.
+        </p>
+        <h4>JQuery</h4>
+        <p>
+            jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers
+            Normal  and UI
+        </p>
+        <h4>JQuery UI</h4>
+        <p>
+            jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library. Whether you're building highly interactive web applications or you just need to add a date picker to a form control,
+            jQuery UI is a perfect choice. Also, in this showcase, we demostrate that it is possible to combine bootstrap and JQuery UI components in the same project.
+        </p>
+
+        <h4>Modernizr</h4>
+        <p>
+            Modernizr makes it easy to write conditional JavaScript and CSS to handle each situation, whether a browser supports a feature or not. It’s perfect for doing progressive enhancement easily.
+        </p>
+        <h4>JSON2</h4>
+        <p>Some browsers (e.g., IE < 8) don't support some JSON functions natively, but you can overcome this by adding a script reference to json2.js</p>
+        <h4>Bundling and Minification</h4>
+        <p>
+            Bundling and minification are two techniques we can use to improve request load time.  Bundling is a feature that makes it easy to combine or bundle multiple files into a single file. You can create CSS, JavaScript and other bundles. Fewer files means fewer HTTP requests and that can improve first page load  performance.
+            Minification performs a variety of different code optimizations to scripts or css, such as removing unnecessary white space and comments and shortening variable names to one character. With this technique we can reduce the size of the requested assets.
+
+        </p>
+    }
+

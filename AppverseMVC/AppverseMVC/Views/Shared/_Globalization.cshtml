@@ -1,0 +1,434 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Globalization</h3>
+<p>
+    Globalization is the process of designing and developing a software product
+    that functions in multiple cultures/locales. This process involves:
+</p>
+<ul>
+    <li>Identifying the culture/locale that must be supported</li>
+    <li>Designing features which support those cultures/locales</li>
+    <li>
+        Writing code that functions equally well in any of the supported
+        cultures/locales
+    </li>
+</ul>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+
+<p>
+    In other words, globalization adds support for input, validate, display, and
+    output of a defined set of language scripts that relate to specific geographic
+    areas. The most efficient way to globalize these functions is to use the
+    concept of cultures/locales. A culture/locale is a set of rules and a set of
+    data that are specific to a given language and geographic area. These rules and
+    data include information on:
+</p>
+<ul>
+    <li>Character classification</li>
+    <li>Date and time formatting</li>
+    <li>Numeric, currency, weight, and measure conventions</li>
+    <li>Sorting rules</li>
+</ul>
+<p>
+    If you are logged in, you can go to this <a href="/Home/Culture">page to change the culture</a>
+</p>
+<p></p>
+<h3>Introduction</h3>
+<p>
+    The purpose of this section is to introduce the concepts of
+    internationalization and address the main point to consider before developing a
+    web page considering multiple cultures:
+</p>
+<ul>
+    <li>Dates, numbers, currency format, decimal point, &hellip;</li>
+    <li>Text messages and validations according the user or browser culture.</li>
+</ul>
+<p>There are two ways to address the culture selection:</p>
+<ul>
+    <li>According browser/computer regional settings.</li>
+    <li>According user preferences. </li>
+</ul>
+<p>There are two ways to address the development of the solution:</p>
+<ul>
+    <li>In the same page</li>
+    <li>One page for each culture</li>
+</ul>
+<p></p>
+<h3>How to determine a culture</h3>
+<h4>By browser preferences</h4>
+<p>
+    On each HTTP request, there is a header field called Accept-Language which
+    determines which languages the user&rsquo;s browser supports:
+</p>
+<p></p>
+<p>[image1]</p>
+<p></p>
+<p></p>
+<p>
+    For this configuration the IIS receives, this list of cultures. The first
+    one corresponds to Catalan, the second one indicates Spanish, the third
+    indicates Spanish - Latin, etc.
+</p>
+<pre class="prettyprint">Request.UserLanguages
+{string[7]}
+[0]: "ca"
+[1]: "es;q=0.8"
+[2]: "es-419;q=0.6"
+[3]: "en-US;q=0.4"
+[4]: "en;q=0.2"
+[5]: "it-CH;q=0.2"
+[6]: "it;q=0.2"</pre>
+<p>So, if the web site only supports Spanish and English cultures:</p>
+<ul>
+    <li>
+        For the first case, the Catalan language will be ignored and the site
+        will be showed in Spanish (second preference).
+    </li>
+    <li>
+        For the second case, the Catalan language will be ignored and the site
+        will be showed in English culture (en).
+    </li>
+    <li>
+        If the browser sends neither Spanish nor English, the web site will send
+        the pages in the default culture decided by the web site.
+    </li>
+</ul>
+<h4>By user preferences</h4>
+<p>The web site has an option to indicate which culture has to been applied.</p>
+<p></p>
+<h3>Culture and UICulture</h3>
+<p>
+    ASP.NET keeps track of two culture values, the <strong>Culture</strong> and
+    <strong>UICulture</strong>.
+</p>
+<p>
+    The <strong>culture</strong> value determines the results of
+    culture-dependent functions, such as the date, number, and currency formatting.
+</p>
+<p>
+    The <strong>UICulture</strong> determines which resources are to be loaded
+    for the page by the ResourceManager. The ResourceManager simply looks up
+    culture-specific resources that is determined by CurrentUICulture.
+</p>
+<p>
+    Every thread in .NET has CurrentCulture and CurrentUICulture objects. So
+    ASP.NET inspects these values when rendering culture-dependent functions. For
+    example, if current thread's culture (CurrentCulture) is set to "en-US"
+    (English, United States), DateTime.Now.ToLongDateString() shows "Saturday,
+    January 08, 2011", but if CurrentCulture is set to "es-CL" (Spanish, Chile) the
+    result will be "sábado, 08 de enero de 2011".
+</p>
+<p></p>
+<h4>How to Support Different Cultures in ASP.NET MVC</h4>
+<p>There are two ways to incorporate different cultures in ASP.NET MVC:</p>
+<ul>
+    <li>By using resource strings in all our site views.</li>
+    <li>By using different set of views for every culture.</li>
+    <li>By mixing between 1 and 2</li>
+</ul>
+<p>Note: This showcase covers case 1.</p>
+<p></p>
+
+
+<h3>How to set a culture</h3>
+<p>All code is in two classes: CultureHelper and AppverseBaseController.</p>
+<p>
+    The <strong>AppverseBaseController</strong> controller class, between other features, adds functionalities for internationalization. All Appverse controllers should inherit from this controllers.
+    In each request we read the culture related cookie and if the value contained is an available and valid culture, we apply it. If not the <strong>CultureHelper</strong> class will return the first preferred culture received from the browser that is supported by the web application. If a specific culture (en-US) is not found, it searches with the neutral culture (en).
+</p>
+<pre class="prettyprint">
+    protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
+    {
+        string[] culturesName = null;
+        // Attempt to read the culture cookie from Request
+        HttpCookie cultureCookie = Request.Cookies[CultureHelper.CultureCookieName];
+        if (cultureCookie != null && cultureCookie.Value != "")
+        {
+            culturesName = new string[1];
+            culturesName[0] = cultureCookie.Value;
+        }
+        else
+            culturesName = Request.UserLanguages; // obtain it from HTTP header AcceptLanguages
+                
+        // Validates culture name, returns first valid culture
+        string cultureName = CultureHelper.GetImplementedCulture(culturesName);
+        // Modify current thread's cultures            
+        Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(cultureName);
+        Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+        return base.BeginExecuteCore(callback, state);
+    }
+
+    protected void ChangeCulture(string newCulture)
+    {
+        // saves the culture into cookie
+        HttpCookie cookie = new HttpCookie(CultureHelper.CultureCookieName, newCulture);
+        if (string.IsNullOrEmpty(newCulture))
+            cookie.Expires = DateTime.Now.AddYears(-1);
+        else
+            cookie.Expires = DateTime.Now.AddYears(1);
+        HttpContext.Response.SetCookie(cookie);
+    }
+</pre>
+<p></p>
+
+<h3>Resource files</h3>
+<h4></h4>
+<p>
+    A very good practice is to avoid dropping the resource files in the special
+    folders called App_GlobalResources and App_LocalResources. If you use that
+    folders you can have some Intellisense problems and the resources won't be
+    available in unit tests.
+</p>
+<p>
+    If you add a resx file to any other folder in an MVC project or class
+    library, the resx is automatically set to be embedded into the project&rsquo;s
+    output assembly. The IDE also assigns the resx a custom tool of
+    ResxCodeFileGenerator to generate a strongly typed wrapper. The generated class
+    is internal by default (this has to be changed to public when the resources are
+    in a different assembly).
+</p>
+<p></p>
+<p>
+    A good practice is to store resource files in a separate assembly, so we can
+    reference them in other project types in the future.
+</p>
+<ul>
+    <li>Language: es</li>
+    <li>Language and region: es-AR</li>
+</ul>
+<p>
+    If we want to localize a web page for all spanish-speaking countries, and
+    not only from a specific country, we have to care only about the language, and
+    not by the region. We don&rsquo;t need to create a resource file for every
+    culture "es-AR", "es-MX", etc. We just need one common file "es".
+</p>
+<p>
+    We have also separated the resources messages by functionality: views,
+    templates and validations.
+</p>
+<p></p>
+
+<h3>Displaying localized messages</h3>
+<p>To show localized texts and messages in a View:</p>
+
+<pre class="prettyprint">
+    &#64;Html.ActionLink(&ldquo;Register&rdquo;, &hellip;
+    &#64;Html.ActionLink(Localization.Layout.Resources.Register,&hellip;
+</pre>
+<p>
+    Previous code is included in the HTML page but it is compiled in server
+    side: it is using Razor syntax.
+</p>
+<p></p>
+<p>To show localized text and messages in the model:</p>
+<p>It is done using annotations:</p>
+<pre class="prettyprint">
+[Display(Name = "Title", ResourceType = typeof(Localization.Model.Event))]
+[Required(ErrorMessageResourceName = "FieldRequired", ErrorMessageResourceType = typeof(Localization.Validations.Validator))]
+[StringLength(20, ErrorMessageResourceName = "StringLength", ErrorMessageResourceType = typeof(Localization.Validations.Validator), MinimumLength = 4)]
+public virtual string Title { get; set; }</pre>
+<p></p>
+<p>As you can see in this property of a sample model of data, it includes:</p>
+<ul>
+    <li>Display text</li>
+    <li>Validation if string is empty</li>
+    <li>Validation of string length</li>
+</ul>
+<p>An all of them are in resources.</p>
+<p></p>
+<h3>Displaying localized dates and numbers</h3>
+<h4>Globalize library</h4>
+<h4></h4>
+<p>
+    Globalize package (<a href="http://www.nuget.org/packages/jquery-globalize/">http://www.nuget.org/packages/jquery-globalize/</a>
+    defines more than 350 cultures and provides an API to convert user-entered
+    number and date strings - in their own format - into actual numbers and dates,
+    and conversely, to format numbers and dates into that string format.
+</p>
+<p></p>
+<h4>Main format functions</h4>
+<p>
+    Formats a date or number according to the given format string and the given
+    culture (or the current culture if not specified).
+</p>
+<pre class="prettyprint">
+// assuming a culture with number grouping of 3 digits,
+// using "," separator and "." decimal symbol.
+Globalize.format( 1234.567, "n" ); // "1,234.57"
+Globalize.format( 1234.567, "n1" ); // "1,234.6"
+Globalize.format( 1234.567, "n0" ); // "1,235"
+// assuming a culture with "/" as the date separator symbol
+Globalize.format( new Date(1955,10,5), "yyyy/MM/dd" ); // "1955/11/05"
+Globalize.format( new Date(1955,10,5), "dddd MMMM d, yyyy" ); // "Saturday November 5, 1955"
+</pre>
+
+
+<h3>Main parsing functions</h3>
+<h4>Parsing integers</h4>
+<p>
+    If a percentage is passed into parseInt, the percent sign will be removed
+    and the number parsed as is. Example: 12.34% would be returned as 12.
+</p>
+<pre class="prettyprint">
+// assuming a culture where "," is the group separator
+// and "." is the decimal separator
+Globalize.parseInt( "1,234.56" ); // 1234
+// assuming a culture where "." is the group separator
+// and "," is the decimal separator
+Globalize.parseInt( "1.234,56" ); // 1234
+</pre>
+
+<p></p>
+<h4>Parsing floats</h4>
+<p>
+    Parses a string representing a floating point number in the given radix (10
+    by default), taking into account any formatting rules followed by the given
+    culture (or the current culture, if not specified).
+</p>
+<p>
+    If a percentage is passed into parseFloat, the percent sign will be removed
+    and the number parsed as is. Example: 12.34% would be returned as 12.34
+</p>
+<pre class="prettyprint">
+// assuming a culture where "," is the group separator
+// and "." is the decimal separator
+Globalize.parseFloat( "1,234.56" ); // 1234.56
+// assuming a culture where "." is the group separator
+// and "," is the decimal separator
+Globalize.parseFloat( "1.234,56" ); // 1234.56
+</pre>
+
+
+
+<p></p>
+<h4>Parsing dates</h4>
+<p>
+    Parses a string representing a date into a JavaScript Date object, taking
+    into account the given possible formats (or the given culture's set of default
+    formats if not given). As before, the current culture is used if one is not
+    specified.
+</p>
+<pre class="prettyprint">
+Globalize.culture( "en" );
+Globalize.parseDate( "1/2/2003" ); // Thu Jan 02 2003
+Globalize.culture( "fr" );
+Globalize.parseDate( "1/2/2003" ); // Sat Feb 01 2003
+</pre>
+
+
+<p></p>
+<p></p>
+<h3>How to setup the library</h3>
+<p>
+    If full site has to be globalized, we recommend adding this piece of code in
+    the layout page between the layout and scripts section. With this code we load
+    the globalize library and culture defined by the user:
+</p>
+<pre class="prettyprint">
+&lt;script src="~/Scripts/jquery.globalize/globalize.js"&gt;&lt;/script&gt;
+&lt;script src="~/Scripts/globalize/cultures/globalize.culture.&#64;(System.Globalization.CultureInfo.CurrentCulture.Name).js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+$(document).ready(function () {
+    Globalize.culture('&#64;(System.Globalization.CultureInfo.CurrentCulture.Name)');
+});
+&lt;/script&gt;
+</pre>
+
+
+<p></p>
+<h3>Overriding client side validations</h3>
+<p>We only add these methods in pages where they are required:</p>
+<p></p>
+<pre class="prettyprint">
+&lt;script&gt;
+$.validator.methods.number = function (value, element) {
+    return this.optional(element) ||
+    !isNaN(Globalize.parseFloat(value));
+}
+    $.validator.methods.date = function (value, element) {
+    return this.optional(element) || Globalize.parseDate(value) ||
+           Globalize.parseDate(value,"&#64;Appverse.Web.Constants.Formats.HTML5DateFormat");
+}
+jQuery.extend(jQuery.validator.methods, {
+    range: function (value, element, param) {
+        //Use the Globalization plugin to parse the value
+        var val = Globalize.parseFloat(value);
+        return this.optional(element) || (val &gt;= param[0] &amp;&amp; val &lt;= param[1]);
+    }
+});
+&lt;/script&gt;
+</pre>
+
+<p></p>
+<h3>Possible problems: HTML5 Input type and date Formatting Issues</h3>
+<h3>The problem with Datepicker and HTML 5</h3>
+<p>
+    Currently, for Chrome and Opera navigators, when an input text box is
+    definid as input type="date", they automatically show the date localized to the
+    corresponding locale of the browser format and using their native calendar
+    control. Also, they require the date in yy-mm-dd format. This is a problem
+    because the rest of browsers will show the date in that format and won't show
+    any datapicker. To solve this problem we have used <a href="http://http://modernizr.com/">Modernizr</a> to detect if current browser
+    supports an HTM5 feature as the datapicker, if not, we load the jquery
+    datapicker for those browsers and for all input date text boxes. We have added
+    the code in the layout.cshtml page, so we don't have to worry about this in any
+    page.
+</p>
+<p>
+    Modernizr is a JavaScript library that detects HTML5 and CSS3 features in
+    the user&rsquo;s browser. Adding next code in _layout.chtml file, we solve this
+    problem for all input date text boxes:
+</p>
+<script type="text/javascript" src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+<pre class="prettyprint">
+        if (!Modernizr.inputtypes.date) {
+            $(function () {
+                $('input[type=date]').datepicker({
+                    dateFormat: 'yy-mm-dd',
+                });
+            });
+        }
+</pre>
+<p>
+    The result of executing this script can checked in the datetime field of
+    this <a href="/Items/Edit/1/">page</a> when it is opened using
+    Chrome and Mozilla or Internet Explorer.
+</p>
+<p>
+    Other consideration when using &#60;input type=“date”&#62; tag:<br />
+    - Chrome will display the dates using the default settings of the configured language to show menus and options.
+    This can be changed in Settings --> Language and input settings... --> Select a language and press the button "Display Google Chrome in this language".<br />
+    - Firefox and Internet Explorer will display the dates using the yy-mm-dd format.
+</p>
+<p>
+    Browsers always post dates in RFC 3339-format. Make sure the server accepts date on that format only. In ASP.NET MVC is very simple 
+</p>
+<pre class="prettyprint">    
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [Display(Name = "When", ResourceType = typeof(Localization.Model.Item))]        
+    public virtual DateTime MyDate { get; set; }
+</pre>
+}
+

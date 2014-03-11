@@ -1,0 +1,81 @@
+﻿<h3>
+    Theming using <a href="http://www.asp.net/visual-studio/overview/2013/creating-web-projects-in-visual-studio#bootstrap">Bootstrap</a>
+</h3>
+<p>
+    The Visual Studio 2013 project templates use Bootstrap, a layout and theming framework created by Twitter. Bootstrap uses CSS3 to provide responsive design,
+    which means layouts can dynamically adapt to different browser window sizes. For example, maximize the window of the browser and check how the Web Form template looks.
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+<p>
+    Make the window narrower, and the horizontally arranged columns move into vertical arrangement.
+</p>
+<p>
+    Narrow the window a little more, and the horizontal top menu turns into an icon that you can click to expand into a vertically oriented menu.
+
+</p>
+<p>
+    You can also use Bootstrap's theming feature to easily effect a change in the
+    application's look and feel. For example, you can do the following steps to
+    change the theme.
+</p>
+<ol>
+    <li>
+        In your browser, go to <a href="http://Bootswatch.com">
+            http://Bootswatch.com
+        </a>, choose a theme, and then click <strong>Download</strong>. (This
+        downloads <em>bootstrap.min.css</em> by default; if you want to examine the
+        CSS code, get <em>bootstrap.css</em> instead of the minified version.)
+    </li>
+    <li>Copy the contents of the downloaded CSS file.</li>
+    <li>
+        In Visual Studio, create a new <strong>Style Sheet</strong> file named
+        <em>bootstrap-theme.css</em> in the <em>Content</em> folder and paste the
+        downloaded CSS code into it.
+    </li>
+    <li>
+        Open <em>App_Start/Bundle.config</em> and change <em>bootstrap.css</em> to <em>
+            bootstrap-theme.css
+        </em>.
+    </li>
+</ol>
+<p>
+    Run the project again, and the application has a new look. The
+    following illustration shows the effect of the Amelia theme:
+</p>
+<p>
+
+    Many Bootstrap themes are available, both free and premium versions.
+    Bootstrap also offers a wide variety of UI components, such as
+    <a href="http://twitter.github.io/bootstrap/components.html#dropdowns">
+        drop-downs
+    </a>,
+    <a href="http://twitter.github.io/bootstrap/components.html#buttonGroups">
+        button
+        groups
+    </a>, and
+    <a href="http://twitter.github.io/bootstrap/base-css.html#images">icons</a>. For
+    more information about Bootstrap, see
+    <a href="http://twitter.github.io/bootstrap/">the Bootstrap site</a>.
+</p>
+<p>
+    If you use the Web Forms designer in Visual Studio, note that the designer doesn't support CSS3,
+    so it doesn't accurately show all the effects of Bootstrap themes or responsive
+    layout changes. However, the Web Forms pages will display correctly when viewed
+    with a browser.
+</p>
+
+
+<p>
+    This document is based on:
+    <a class="btn btn-default" href="http://www.asp.net/visual-studio/overview/2013/creating-web-projects-in-visual-studio#bootstrap">Learn more…</a>    
+    
+    Another one: http://getbootstrap.com/css/#grid-example-mixed
+
+</p>
+<p>
+
+</p>
+}
+

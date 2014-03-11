@@ -1,0 +1,89 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+@{
+    ViewBag.Title = "Appverse Web# MVC";
+}
+
+<div class="well">
+    <h1>@ViewBag.Title</h1>
+    <h2>@ViewBag.Message</h2>
+    <p>
+        The objective of Appverse Web # is to become a Framework and a guideline to develop ASP.NET Web Applications. It leverages years of real-world experience in developing Web Applications and it is built on top of best-of-breed open source stacks and using standards on each layer.
+    </p>
+    <p>
+        This showcase aims to cover the main important points when creating an  enterprise web application. It is separated in four main parts:
+    </p>    
+
+    <ul>
+        <li>
+            <h4>@Html.ActionLink("ASP.NET MVC application", "Index", "Items")</h4>
+            Web application that combine technologies as ASP.NET MVC, Razor, HTML5, CSS, JavaScript, Bootstrap, Castle Windsor, NHibernate, Entity Framework, Modernizer, JSON2.
+        </li>
+        <li>
+            <h4>@Html.ActionLink("ASP.NET MVC to manage users and roles ", "Index", "Accounts", new { area = "AccountsManager" }, null)</h4>
+            A simple Web application that combine technologies as ASP.NET MVC, Razor, Bootstrap and Entity Framework.
+        </li>
+        <li>
+            <h4>@Html.ActionLink("Web API services", "WebAPIOperations", "Items")</h4>
+            REST operations in XML and JSON formats combining technologies as Web API, Castle Windsor, NHibernate, Entity Framework.
+        </li>
+        <li>
+            <h4>@Html.ActionLink("Active Directory", "ActiveDirectory", "Home")</h4>
+            Active Directory authentication and authorization.
+        </li>
+    </ul>
+
+        <br />
+        <span class="help-block">
+            For details about technologies and products used in the showcase, read the
+            @Html.ActionLink("technical landscape", "Index", new { id = "_TechnicalLandscape" })
+            .
+        </span>
+</div>
+@if (ViewBag.HelpPage.SummaryMode == true)
+{
+    <div class="well">
+        <fieldset>
+            <legend>Localization and database query using Dependency Injection</legend>
+            @if (Request.IsAuthenticated)
+            {
+                <h4>@Localization.Layout.Home.ItemsRegistered.Replace("{0}", ViewBag.ItemCount.ToString())</h4>
+                <p>@Html.ActionLink(Localization.Layout.Home.ViewYourItems, "Index", "Items")</p>
+                <p>@Html.ActionLink(Localization.Layout.Home.ChangeLanguage, "Culture")</p>
+            }
+            else
+            {
+                <h4><a href="/Account/Login" title="@Localization.Layout.Home.LoginToViewYourItems">@Localization.Layout.Home.Login</a> @Localization.Layout.Home.ToViewYourItems</h4>
+            }
+        </fieldset>
+    </div>
+}
+
+<div id="partialSection">
+
+    @Html.Partial((string)ViewBag.HelpPage.Page)
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

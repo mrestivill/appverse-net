@@ -1,0 +1,101 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Logging</h3>
+<p>
+    <a href="http://docs.castleproject.org/Windsor.Logging-Facility.ashx" target="_blank"><strong>The Logging Facility</strong></a> of Castle Windsor. Castle Windsor comes with some additional, optional facilities,
+    which are extensions to the out of the box functionality of Windsor. The facility provides common abstraction for major logging frameworks such as Log4net and NLog as well as built in logging mechanism of Trace class.
+    This provides a common abstraction for the unlikely case of changing the logging framework after to start working on the application. More importantly though, the facility takes care of providing to the classes with
+    correct ILogger instance for their need, without any additional static dependency that is present in most applications that not using Castle Windsor.
+</p>
+@if (ViewBag.HelpPage.SummaryMode==false)
+{
+<p>
+    Using dependency injection, we can log any message in any class only
+    declaring a public property or an input parameter of the constructor as ILogger
+    type.
+</p>
+<p>
+    We have developed an interceptor that works in the same way. This
+    interceptor can be declared programmatically but we have declared in the
+    web.config file so if we do not use it, we can deactivate it. For example, the
+    business class of the ItemRepository is using this interceptor. Any call to
+    this class, will be logged. To change the Log4net configuration we have to
+    change the log4net.config file.
+
+    The Loggin facility is used to add logging support to the showcase, in this case the Log4net facility with a custom implementation to maintain the database session with NHibernate.<br /><br />
+
+    Example: How to adds the LoggingFacility facility to the container. We configure it indicating that we want to use the Log4net api. After this, to log any message, we only need to
+    declare "public ILogger Logger { get; set; }", check the "ExceptionInterceptor" implementation example on <a href="/Home/Index/_Containers" target="_blank">Containers section.</a>    
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <pre class="prettyprint">
+        //Very important: Use Castle.Core.Logging.ILogger, not log4net.Core.ILogger
+        public class LoggerInstaller : IWindsorInstaller
+        {
+            public void Install(IWindsorContainer container, IConfigurationStore store)
+            {
+                container.AddFacility&lt;LoggingFacility&gt;(f =&gt; f.UseLog4Net());
+            }
+        }
+        </pre>
+    XML configuration (web.config)
+    <pre class="prettyprint">
+        &lt;configuration&gt;
+        ....
+        ....
+            &lt;castle&gt;
+                &lt;facilities&gt;
+                    &lt;facility id="logging" 
+                    type="Castle.Facilities.Logging.LoggingFacility, Castle.Facilities.Logging" 
+                    loggingapi="log4net" 
+                    configfile="log4net.Config" /&gt;
+                &lt;/facilities&gt;
+            &lt;/castle&gt;
+        &lt;/configuration&gt;
+    </pre>
+    Log4Net configuration (log4net.config)
+    <pre class="prettyprint">
+        &lt;configuration&gt;
+            &lt;log4net&gt;
+                &lt;appender name="RollingFile" type="log4net.Appender.RollingFileAppender"&gt;
+                    &lt;file value="log/traces.log" /&gt;
+                    &lt;appendtofile value="true" /&gt;
+                    &lt;maximumfilesize value="100KB" /&gt;
+                    &lt;maxsizerollbackups value="2" /&gt; 
+                    &lt;layout type="log4net.Layout.PatternLayout"&gt;        
+                        &lt;conversionpattern value="%date [%thread] %-5level %logger [%method] - %message%newline" /&gt;
+                    &lt;/layout&gt;
+                &lt;/appender&gt;
+                &lt;root&gt;
+                    &lt;level value="DEBUG" /&gt;
+                    &lt;appender-ref ref="RollingFile" /&gt;
+                &lt;/root&gt;
+                &lt;logger name="NHibernate" additivity="false"&gt;
+                    &lt;level value="WARN" /&gt;
+                    &lt;appender-ref ref="RollingFile" /&gt;
+                &lt;/logger&gt;
+            &lt;/log4net&gt;
+        &lt;/configuration&gt;
+    </pre>
+</p>
+}
+

@@ -1,0 +1,100 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Improving Performance with Output Caching</h3>
+<p>
+    You can improve the performance of an ASP.NET MVC application by taking advantage of the output cache. The output cache enables you to cache the content returned by a controller action.
+    That way, the same content does not need to be generated each and every time the same controller action is invoked.
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <h4>Enabling Output Caching</h4>
+    <p>
+        You enable output caching by adding an [OutputCache] attribute to either an individual controller action or an entire controller class. For example, the controller in Listing 1 exposes an action named Index(). The output of the Index() action is cached for 10 seconds.
+    </p>
+    <h4>Varying the Output Cache</h4>
+    <p>
+        You can have different cached versions of the very same content. by taking advantage of the VaryByParam property of the [OutputCache] attribute. This property enables you to create different cached versions of the very same content when a form parameter or query string parameter varies.
+    </p>
+    <p>
+        To cache multiple versions of page output based on custom strings or membership can be done overriding the GetVaryByCustomString function in Global.asax.cs class.
+    </p>
+    <p>
+        With this function in the MVC controller we enable the caching for 60 seconds. The caching is parametrized using two params: term and user. For each combination of them, there will be a different cache. To enable VaryByCustom we need to override the GetVaryByCustomString method in Global.asax.cs file.
+    </p>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <pre class="prettyprint">
+        [OutputCache(Duration = 60, VaryByParam = "term", VaryByCustom = "user")]
+        public JsonResult AutoCompleteitem(string term)
+        {
+            var titles = items.GetFilteredList&lt;item>("Title", term);
+            List&lt;object> dropDownInfos = new List&lt;object>();
+            Logger.Debug("AutoCompleteItem method call not cached. Param term:" + term + " " + titles.Count + " " + DateTime.Now.ToString());
+            foreach (var item in titles)
+            {
+                if (Request.IsAuthenticated)
+                {
+                    dropDownInfos.Add(new
+                    {
+                        label = item.Title,
+                        moreDetails = "(" + DateTime.Now.ToLongTimeString() + " - " + User.Identity.Name + ")",
+                        value = item.Id
+                    });
+                }
+                else
+                {
+                    dropDownInfos.Add(new
+                    {
+                        label = item.Title,
+                        moreDetails = "(" + DateTime.Now.ToString() + ")",
+                        value = item.Id
+                    });
+                }
+            }
+            return Json(dropDownInfos, JsonRequestBehavior.AllowGet);
+        }
+    </pre>
+
+
+    <p>
+        With this function in Global.asax.cs we enable a different cache for each logged user:
+    </p>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <pre class="prettyprint">
+        public override string GetVaryByCustomString(HttpContext context, string arg)
+        {
+            if (arg == "user")
+            {
+                return context.User.Identity.IsAuthenticated ? context.User.Identity.Name : string.Empty;
+            }
+            return base.GetVaryByCustomString(context, arg);
+        }
+    </pre>
+
+    <p>
+        You can read more information and options in this page:
+        <a href="http://msdn.microsoft.com/en-us/library/hdxfb6cy%28v=vs.85%29.aspx">OutputCache</a>
+    </p>
+
+}
+

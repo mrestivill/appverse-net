@@ -1,0 +1,68 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<div class="well">
+    <h1>@ViewBag.Title</h1>
+    <p>
+        The objective of Appverse Web# is to become a Framework and a guideline to develop ASP.NET Web Applications. It leverages years of real-world experience in developing Web Applications and it is built on top of best-of-breed open source stacks and using standards on each layer. 
+        This showcase combines technologies as ASP.NET MVC, Razor, HTML5, CSS, JavaScript, Bootstrap, Castle Windsor, NHibernate, Entity Framework, Modernizer, JSON2,...
+    </p>
+    <p>
+        It features links, documents and code to help you get the most important points covered by this showcase.
+        If you have any questions about this showcase, visit
+        <a href="http://appverse.org" title="THE APPVERSE PROJECT">THE APPVERSE PROJECT</a> website.
+        @*ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.*@
+    </p>
+        @*<p>
+            This is a show case of Appverse Web#: A ASP.NET MVC project with Razor as a view engine.
+            <a href="http://asp.net/mvc" class="btn btn-primary btn-large" title="ASP.NET MVC Website">Learn more &raquo;</a>
+            <br />
+            Appverse Web# aims to cover the main important points when creating an enterprise web application. It combines technologies as ASP.NET MVC, Razor, HTML5, CSS or JavaScript.
+        </p>*@
+</div>
+
+
+<div>
+@if(ViewBag.Submenu==1){
+    <ul class="nav nav-tabs" style="margin-bottom: 15px;">
+        <li class="active">@Html.ActionLink("Display reloading full page", "Index") </li>
+        <li>@Html.ActionLink("Display using Ajax", "ViewByAjax")</li>
+        <li>@Html.ActionLink("Display using jQuery and json", "ViewByJquery")</li>
+    </ul>
+}
+@if (ViewBag.Submenu == 2)
+{
+    <ul class="nav nav-tabs" style="margin-bottom: 15px;">
+        <li>@Html.ActionLink("Display reloading full page", "Index") </li>
+        <li class="active">@Html.ActionLink("Display using Ajax", "ViewByAjax")</li>
+        <li>@Html.ActionLink("Display using jQuery and json", "ViewByJquery")</li>
+    </ul>
+}
+@if (ViewBag.Submenu == 3)
+{
+    <ul class="nav nav-tabs" style="margin-bottom: 15px;">
+        <li>@Html.ActionLink("Display reloading full page", "Index") </li>
+        <li>@Html.ActionLink("Display using Ajax", "ViewByAjax")</li>
+        <li class="active">@Html.ActionLink("Display using jQuery and json", "ViewByJquery")</li>
+    </ul>
+}
+</div>

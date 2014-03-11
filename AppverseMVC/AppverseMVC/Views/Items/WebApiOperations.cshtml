@@ -1,0 +1,99 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+@{
+    ViewBag.Title = "Appverse Web# Web Api operations";
+    ViewBag.Message = "REST CRUD operations";
+}
+
+<div class="well">
+    <h1>@ViewBag.Title</h1>
+    <h2>@ViewBag.Message</h2>
+    The objective of Appverse Web# is to become a Framework and a guideline to develop ASP.NET Web Applications. It leverages years of real-world experience in developing Web Applications and it is built on top of best-of-breed open source stacks and using standards on each layer.
+    This showcase combines technologies as ASP.NET MVC, Razor, HTML5, CSS, JavaScript, Bootstrap, Castle Windsor, NHibernate, Entity Framework, Modernizer, JSON2,...
+
+
+    <p>This showcase shows the possibilities of ASP.NET to develop and exectue Restfull CRUD operations using NHibernate and Dependency Injection.</p>
+    <p>
+        <b>Post</b> operations implement Cross Site Request Forgery protection. The simple test client for ASP.NET Web API has been modified to add authomatically the corresponing header and X-XSRF-Token when it is available.<br />
+    </p>
+</div>
+
+@if (ViewBag.HelpPage.SummaryMode == true)
+{
+    <div class="well">
+        <fieldset>
+            <legend>Basic test</legend>
+            <div class="row">
+                <div class="col-md-7">
+                    <h4>Get all <a href="/api/ItemsCRUD">api/ItemsCRUD</a></h4>
+                    <span class="help-block">This is the only operation that do not require authentication</span>
+                    <h4>Get one by id <a href="/api/ItemsCRUD/1">api/ItemsCRUD/1</a></h4>
+                    <span class="help-block">
+                        To execute this operation is required to be authenticated
+                    </span>
+                    <h4>Get by title <a href="/api/ItemsCRUD?title=Concert">api/ItemsCRUD?title=Concert</a></h4>
+                    <span class="help-block">To execute this operation is required to be authenticated</span>
+                </div>
+                <div class="col-md-5">
+                    <span class="help-block">
+                        The services return <b>json</b> or <b>xml</b> depending on the <a href="/api/ItemsCRUD">request</a>. By default, Internet Explorer returns the data in json format, Firefox and Chrome return the data in xml format.
+                        <br /><br />
+                        Remember that all operation, except the <a href="/api/ItemsCRUD">Get</a> operation, require <b>authentication</b>. Default login: <b>user</b>. Password: <b>user123</b>
+                    </span>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="well">
+        <fieldset>
+            <legend>Advanced test</legend>
+            <h4>@Html.ActionLink("Web Api Help page and simple Test Client", "Index", "Help", new { area = "" }, null)</h4>
+            <p>
+                This page generates help page content for the Web API (REST and CRUD operations) contained in the project automatically. The page can use this content to learn how to call your web APIs.
+            </p>
+            <p>
+                This page includes a simple test client for ASP.NET Web API. The page is generated automatically and can use different content as JSON or XML.
+                a javascript page to test the Web API from the browser.
+            </p>
+        </fieldset>
+    </div>
+
+    <hr />
+    <h2>Main topics covered in this section</h2>
+    <hr />
+}
+
+<div id="partialSection">
+    @Html.Partial((string)ViewBag.HelpPage.Page)
+</div>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <br />
+    <hr />
+    <p>Go to the show case: <a href="/Items/WebAPIOperations" class="btn btn-default">Show case</a></p>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,220 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Ajax and jQuery</h3>
+<p>
+    <ul>
+        <li><a href="/Items">Autocomplete textbox </a> using jquery and json. </li>
+        <li>
+            Server Side Pagination control used in two different ways: <a href="/Items">MVC standard</a> and <a href="/Items/ViewByJquery">JQuery</a> . Both support server pagination and
+            ordering and are calling the same business control.
+        </li>
+        <li>
+            Javascript Pattern applied to scripts: <a href="http://www.uipress.com/patterns-in-javascript-the-prototype-pattern/" target="_blank">"The Revealing Prototype Pattern"</a>
+        </li>
+        <li>
+            JSON2. Converts a JavaScript Object Notation (JSON) string into an
+            object. <a href="http://msdn.microsoft.com/en-us/library/ie/cc836466(v=vs.94).aspx" target="_blank">JSON.parse</a>, This file creates a global JSON object.
+        </li>
+        <li><a href="http://modernizr.com/" target="_blank">Modernizr</a> is a JavaScript library that detects HTML5 and CSS3 features in the user’s browser.</li>
+    </ul>
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <br />
+    <p>
+        <h4>jQuery</h4>
+        <a href="http://jquery.com/" target="_blank">jQuery</a> is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation,
+        and Ajax much simpler with an easy-to-use API that works across a multitude of browsers. With a combination of versatility and extensibility,
+        jQuery has changed the way that millions of people write JavaScript.<br /><br />
+
+        <a href="http://jquery.com/" target="_blank">jQuery UI</a> is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library. Whether you're
+        building highly interactive web applications. For example the Autocomplete widget(*) enables users to quickly find and select from a pre-populated list of values as they type, 
+        leveraging searching and filtering. The datasource is a simple JavaScript array or remote datasource.<br /><br />
+        Example: The ShowCase implements the <a href="/Items">Autocomplete widget</a> 
+        and adds caching to improve performance.
+        <pre class="prettyprint">
+    $(document).ready(function () {
+        function prepareAutocomplete() {
+            $("#ItemName").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Items/AutoCompleteItem",
+                        type: "POST",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.label, value: item.value, moreDetails: item.moreDetails };
+                            }));
+                        }
+                    });
+                },
+                select: function (item, ui) {
+                    $('#ItemName').val(ui.item.label);
+                    $('#Id').val(ui.item.value);
+                    return false;
+                },
+            }
+            ).data("ui-autocomplete")._renderItem = function (ul, item) {
+                return $("&lt;li&gt;")
+                .append("&lt;a&gt;" + item.label + " &lt;small class='text-info'&gt;" + item.moreDetails + "&lt;/small&gt;&lt;/a&gt;")
+                .appendTo(ul);
+            };
+        }
+    });
+        </pre>
+        Configuring the <a href="/Home/Index/_Caching">"OutputCache"</a> in the ItemsController is it possible to improve the performance of an ASP.NET MVC application by taking advantage of the output cache.
+        The output cache enables to cache the content returned by a controller action.<br />
+        * Widget: small application with limited functionality that can be installed and executed within a web page
+    </p>
+    <br />
+    <p>
+        <h4>Server Side Pagination control</h4>
+        The ShowCase implements server side pagination in the request action, this action just retrieve a defined number of records from the repository.<br />
+        Example: The action link to retrieve information using pagination
+        <pre class="prettyprint">
+        //MVC Razor
+        @@Html.ActionLink("Previous", "Index", new { id = Model.PageNumber - 1, criteria = Request["criteria"], direction = true })
+        </pre>
+        ItemsController action implementation code
+        <pre class="prettyprint">
+[HttpPost]
+public ActionResult GetItems(int? page, bool? direction, string criteria = null)
+{
+    var itemPage = criteria == null ? items.GetPage&lt;Item&gt;(page.GetValueOrDefault(1))
+                                        : direction == null ? items.GetPage&lt;Item&gt;(page.GetValueOrDefault(1), criteria: criteria)
+                                                            : items.GetPage&lt;Item&gt;(page.GetValueOrDefault(1), criteria: criteria, direction: direction.Value);
+    JsonResult json = Json(itemPage, JsonRequestBehavior.AllowGet);
+    return json;
+}
+        </pre>
+        NHibernate SQL Server request example
+        <pre class="prettyprint">
+        //first pagination request
+        exec sp_executesql N'SELECT count(*) as y0_ FROM [Item] this_;
+        SELECT TOP (@@p0) this_.Id as Id0_0_, 
+                         this_.Description as Descript2_0_0_, 
+                         this_.Title as Title0_0_, 
+                         this_.[When] as When4_0_0_, 
+                         this_.[Where] as Where5_0_0_, 
+                         this_.[Value] as Value6_0_0_ 
+        FROM [Item] this_;',N'@@p0 int',@@p0=5
+        go
+
+        //second pagination request
+        exec sp_executesql N'SELECT count(*) as y0_ FROM [Item] this_;
+        SELECT TOP (@@p0) Id0_0_, Descript2_0_0_, Title0_0_, When4_0_0_, Where5_0_0_, Value6_0_0_ 
+        FROM (SELECT this_.Id as Id0_0_, 
+                     this_.Description as Descript2_0_0_, 
+                     this_.Title as Title0_0_, 
+                     this_.[When] as When4_0_0_, 
+                     this_.[Where] as Where5_0_0_, 
+                     this_.[Value] as Value6_0_0_, 
+                     ROW_NUMBER() OVER(ORDER BY CURRENT_TIMESTAMP) as __hibernate_sort_row FROM [Item] this_) as query 
+        WHERE query.__hibernate_sort_row > @@p1 
+        ORDER BY query.__hibernate_sort_row;',N'@@p0 int,@@p1 int',@@p0=5,@@p1=5
+        go
+        </pre>
+    </p>
+    <br />
+    <p>
+        <h4>JSON2</h4>
+        Some browsers (e.g., IE < 8) don't support some JSON functions natively, but you can overcome this by adding a script reference to json2.js, downloadable from <a href="http://www.json.org/json2.js" target="_blank">http://www.json.org/json2.js</a>.
+        <a href="http://stackoverflow.com/questions/552135/difference-between-json-js-and-json2-js" target="_blank">http://stackoverflow.com/questions/552135/difference-between-json-js-and-json2-js</a><br />
+        jQuery doesn't have any native JSON encoding functionality. However there are a number of JSON implementations available. This show case is using the JSON2.js file from <a href="https://github.com/douglascrockford/JSON-js" target="_blank">Douglas Crockford</a>
+        to serialize one parameter into JSON. On current browsers, this file does nothing, prefering the built-in JSON object.
+        <a href="http://code.google.com/p/freebase-site/source/browse/site/trunk/third_party/license.json2.js.js?r=3882" target="_blank">License</a><br />
+        * <a href="https://github.com/bestiejs/json3" target="_blank">JSON 3</a>, the new version, is a modern JSON implementation compatible with a variety of JavaScript platforms, including Internet Explorer 6, Opera 7, Safari 2, and Netscape 6. The current version is 3.2.6.
+        <a href="http://kit.mit-license.org/" target="_blank">License</a>
+    </p>
+    <br />
+    <p>
+        <h4>Modernizr</h4>
+        <strong>HTML5 Input type and date Formatting Issues</strong>. Currently, for Chrome and Opera navigators, when an input text box is definid as input type="date", they automatically show
+        the date localized to the corresponding locale of the browser format and using their native calendar control. Also, they require the date in yy-mm-dd format.
+        This is a problem because the rest of browsers will show the date in that format and won't show any datapicker. To solve this problem we have used <a href="http://http://modernizr.com/">Modernizr</a>
+        to detect if current browser supports an HTM5 feature as the datapicker, if not, we load the jquery datapicker for those browsers and for all input date text boxes.
+        We have added the code in the layout.cshtml page, so we don't have to worry about this in any page.
+    </p>
+    <p>
+        Modernizr is a JavaScript library that detects HTML5 and CSS3 features in the user’s browser.
+        Adding next code in _layout.chtml file, we solve this problem for all input date text boxes:
+    </p>
+    <pre class="prettyprint">
+        if (!Modernizr.inputtypes.date) {
+            $(function () {
+                $('input[type=date]').datepicker({
+                    dateFormat: 'yy-mm-dd',
+                });
+            });
+        }
+    </pre>
+
+    <p>
+        The result of executing this script can checked in the datetime field of this <a href="/Items/Edit/1/">page</a> when it is opened using Chrome and Mozilla or Internet Explorer.
+    </p>
+
+    <p>
+        For more information read this page:
+        <a href="http://html5doctor.com/using-modernizr-to-detect-html5-features-and-provide-fallbacks/">Using Modernizr to detect HTML5 features and provide fallbacks </a>
+    </p>
+    <p>
+        The <strong>"X-UA-Compatible"</strong> meta tag allows web developers to choose what version of Internet Explorer the page should be rendered as. This meta tag must appear in the
+        header of the webpage (the HEAD section) before all other elements except for the title element and other meta elements.
+        <a href="http://msdn.microsoft.com/en-US/jj676915.aspx" target="_blank">[Ref]</a>
+        <pre class="prettyprint">
+        &lt;!-- The following value to display the webpage in edge mode, which is the highest standards mode supported by IE --&gt;
+        &lt;http-equiv="X-UA-Compatible" content="IE=edge" /&gt;
+        </pre>
+    </p>
+
+    <p>Other interesting links:</p>
+    <ul>
+        <li>
+            <a href="http://www.west-wind.com/weblog/posts/2012/Nov/08/HTML5-Input-typedate-Formatting-Issues">
+                HTML5 Input type=date Formatting Issues
+            </a>
+        </li>
+        <li>
+            <a href="http://stackoverflow.com/questions/16890376/chrome-type-date-and-jquery-ui-date-picker-clashing">
+                Chrome type=&ldquo;date&rdquo; and jquery ui date picker clashing
+            </a>
+        </li>
+        <li>
+            <a href="http://stackoverflow.com/questions/494958/how-do-i-localize-the-jquery-ui-datepicker">
+                How do I localize the jQuery UI Datepicker?
+            </a>
+        </li>
+    </ul>
+
+
+    <p>
+        @*<a class="btn btn-default" href="http://weblogs.asp.net/jgalloway/archive/2012/08/29/simplemembership-membership-providers-universal-providers-and-the-new-asp-net-4-5-web-forms-and-asp-net-mvc-4-templates.aspx">Learn more…</a>*@
+    </p>
+    <p>
+
+    </p>
+}
+

@@ -120,7 +120,7 @@
   <ItemGroup>
     <Compile Include="Installers\WindsorControllerFactory.cs" />
     <Compile Include="Attributes\AddCachingHeader.cs" />
-    <Compile Include="Attributes\ValidateHttpAntiForgeryTokenAttribute.cs" />
+    <Compile Include="Attributes\ValidateHttpAntiForgeryToken.cs" />
     <Compile Include="Controllers\AppverseBaseController.cs" />
     <Compile Include="CultureHelper.cs" />
     <Compile Include="Installers\ControllersInstaller.cs" />

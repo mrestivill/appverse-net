@@ -1,0 +1,120 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Responsive layout using Bootstrap framework</h3>
+<h4>Responsive layout </h4>
+<p>
+    Responsive layout is a Web design approach aimed to provide optimal viewing, reading and navigation across a wide range of devices (from mobile phones to desktop computer monitors). In other words, the layout of the screen will adapt to the size of the browser screen.
+</p>
+<p>
+    For examle, go to this <a href="http://dev.appversesharp.com/Items" class="btn-sm btn-info">page</a> and maximize the navigator window width. You can observe that in the bottom of the page the layout of the screen is designed using three columns.
+<p>
+    Make the window narrower, and the horizontally arranged columns move into vertical arrangement.
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <p>
+        Narrow the window a little more, and the horizontal top menu turns into an icon that you can click to expand into a vertically oriented menu. Also, and between many others effects, check that at the same point the "Id" column disappears.
+    </p>
+    <h4>Bootstrap framework</h4>
+    <p>
+        Bootstrap is a layout and theming framework created by Twitter and uses CSS3 to provide responsive design, which means layouts can dynamically adapt to different browser window sizes.
+    </p>
+    <p>
+        Also, Bootstrap has been adopted by Microsoft in Visual Studio 2013. For this version, project templates use Bootstrap.
+    </p>
+    <p>
+        These are the key breakpoints by default in Bootstrap:
+        <ul>
+            <li>Extra small devices <small>Phones (&lt;768px)</small> </li>
+            <li>Small devices <small>Tablets (&ge;768px)</small> </li>
+            <li>Medium devices <small>Desktops (&ge;992px)</small> </li>
+            <li>Large devices <small>Desktops (&ge;1200px)</small> </li>
+        </ul>
+    </p>
+    <p>
+        The programmer only needs to reference in the web page the required styles according to the Bootstrap documentation to get the desired layout.
+    </p>
+
+    <p>
+        Interesting links to know more about Bootstrap:
+    </p>
+    <p>
+        <a href="http://getbootstrap.com/css/#responsive-utilities">Overview</a><br />
+        <a href="http://getbootstrap.com/getting-started/#customizing">Examples of basic templates</a>
+    </p>
+    <h3>
+        Theming using <a href="http://www.asp.net/visual-studio/overview/2013/creating-web-projects-in-visual-studio#bootstrap">Bootstrap</a>
+    </h3>
+    <p>
+        You can also use Bootstrap's theming feature to easily effect a change in the
+        application's look and feel. For example, you can do the following steps to
+        change the theme.
+    </p>
+    <ol>
+        <li>
+            In your browser, go to <a href="http://Bootswatch.com">
+                http://Bootswatch.com
+            </a>, choose a theme, and then click <strong>Download</strong>. (This
+            downloads <em>bootstrap.min.css</em> by default; if you want to examine the
+            CSS code, get <em>bootstrap.css</em> instead of the minified version.)
+        </li>
+        <li>Copy the contents of the downloaded CSS file.</li>
+        <li>
+            In Visual Studio, create a new <strong>Style Sheet</strong> file named
+            <em>bootstrap-theme.css</em> in the <em>Content</em> folder and paste the
+            downloaded CSS code into it.
+        </li>
+        <li>
+            Open <em>App_Start/Bundle.config</em> and change <em>bootstrap.css</em> to <em>
+                bootstrap-theme.css
+            </em>.
+        </li>
+    </ol>
+    <p>
+
+        Many Bootstrap themes are available, both free and premium versions.
+        Bootstrap also offers a wide variety of UI components, such as
+        <a href="http://twitter.github.io/bootstrap/components.html#dropdowns">
+            drop-downs
+        </a>,
+        <a href="http://twitter.github.io/bootstrap/components.html#buttonGroups">
+            button
+            groups
+        </a>, and
+        <a href="http://twitter.github.io/bootstrap/base-css.html#images">icons</a>. For
+        more information about Bootstrap, see
+        <a href="http://twitter.github.io/bootstrap/">the Bootstrap site</a>.
+    </p>
+    <p>
+        If you use the Web Forms designer in Visual Studio, note that the designer doesn't support CSS3,
+        so it doesn't accurately show all the effects of Bootstrap themes or responsive
+        layout changes. However, the Web Forms pages will display correctly when viewed
+        with a browser.
+    </p>
+    <p>
+        If you are using IE navigator and you have problems with the layout, deactivate compatibility and change Document Mode to IE8 or higher standards going to “F12 Developer Tools” pressing the F12 key.
+        For more information <a href="https://svncolabora.gft.com/svn/colabora/IL-50637-04_00/trunk/documents/Supported browsers and IE compatibility.docx"> read this document</a>
+    </p>
+}
+

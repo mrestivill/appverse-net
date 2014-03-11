@@ -1,0 +1,112 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Appverse Web# MVC</h3>
+<p>
+    <a href="http://go.microsoft.com/fwlink/?LinkId=245151" target="_blank">ASP.NET MVC</a> is a free Microsoft framework to develop web applications using the Model-View-Controller pattern.
+    ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that enables a clean separation of concerns and that gives you full control over markup
+    for enjoyable, agile development. ASP.NET MVC includes many features that enable fast, <strong>TDD-friendly development</strong> for creating sophisticated applications that use
+    the latest web standards.<br />    
+</p>
+<p>
+    Go to the <a href="Items" class="btn-sm btn-info">Show case</a>
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <br />
+    <p>
+        The <a href="http://msdn.microsoft.com/en-us/library/dd381412(v=vs.100).aspx" target="_blank">Model-View-Controller (MVC)</a> architectural pattern separates an
+        application into three main components: the model, the view, and the controller. The ASP.NET MVC framework provides an alternative to the ASP.NET Web Forms pattern
+        for creating Web applications. The ASP.NET MVC framework is a lightweight, highly testable presentation framework that (as with Web Forms-based applications)
+        is integrated with existing ASP.NET features, such as master pages and membership-based authentication. The MVC framework is defined in the System.Web.Mvc assembly.
+
+        The MVC framework includes the following components:
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 well text-center">
+                <strong>Views.</strong><br />
+                Views are the components that display the application's user interface (UI). Typically, this UI is created from the model data.
+            </div>
+            <div class="col-md-3 visible-md visible-lg">
+                <span class="thumbnail alert-warning">
+                    An example would be an edit view of a Products table that displays text boxes, drop-down lists, and check boxes based on the current state of a Product object.
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1 well text-center">
+                <strong>Models.</strong><br />
+                Model objects are the parts of the application that implement the logic for the application's data domain. Often, model objects retrieve and store
+                model state in a database. In small applications, the model is often a conceptual separation instead of a physical one.
+            </div>
+            <div class="col-md-4 col-md-offset-2 well text-center">
+                <strong>Controllers.</strong><br />
+                Controllers are the components that handle user interaction, work with the model, and ultimately select a view to render that displays UI.
+                In an MVC application, the view only displays information; the controller handles and responds to user input and interaction.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 visible-md visible-lg">
+                <span class="thumbnail alert-info">
+                    For example, if the application only reads a dataset and sends it to the view, the application does not have a physical model layer and associated classes.
+                    In that case, the dataset takes on the role of a model object.
+                </span>
+            </div>
+            <div class="col-md-4 col-md-offset-4 visible-md visible-lg">
+                <span class="thumbnail alert-success">
+                    For example, the controller handles query-string values, and passes these values to the model, which in turn might use these values to query the database.
+                </span>
+            </div>
+        </div>
+        <br />
+        <h4>Why ASP.NET MVC 5 ?</h4>
+        <strong>The ASP.NET MVC 5 framework offers the following advantages:</strong>
+        <ul>
+            <li>It makes it easier to manage complexity by dividing an application into the model, the view, and the controller.</li>
+            <li>It does not use view state or server-based forms. This makes the MVC framework ideal for developers who want full control over the behavior of an application.</li>
+            <li>It uses a Front Controller pattern that processes Web application requests through a single controller. This enables you to design an application that supports a rich routing infrastructure.</li>
+            <li>It provides better support for <strong>Test-Driven Development (TDD)</strong>.</li>
+            <li>It works well for Web applications that are supported by large teams of developers and for Web designers who need a high degree of control over the application behavior.</li>
+            <li>It provides total control over your HTML and URLs.</li>
+            <li>Enables rich Ajax integration, and facilitates test driven development.</li>
+            <li>Native support for JavaScript libraries to build multi-platform CSS and HTML5 enabled sites and better tooling support.</li>
+            <li>Implements new technologies as Scaffolding, ASP.NET Identity, One ASP.NET, Bootstrap, Attribute Routing, Filter Overrides</li>
+        </ul>
+        <br />
+        <h4>ASP.NET MVC with Castle Windsor & NHibernate</h4>
+        The <a href="/Home/Index/_Containers">Castle Windsor dependency injection container</a> and <a href="/Home/Index/_ORM">NHibernate ORM</a> work fine together as long as the version issues are controlled.<br /><br />
+        - Castle Windsor is used to set up IoC in a MVC application with a custom controller factory and some configuration in the web.config file. Also the Application Start Method on
+        MVC has been edited to use the new controller factory instead of DefaultControllerFactory.<br />
+        - NHibernate is an Object-Relational Mapper (ORM) for .Net which allows object-oriented models to be mapped to a relational database. In the ShowCase NHibernate has been implement to take the most 
+        of the tasks related to the persistent layer.
+
+    </p>
+    <br />
+    <p>
+        <h4>Test-Driven Development (TDD)</h4>
+        <a href="http://en.wikipedia.org/wiki/Test-driven_development" target="_blank">Test-Driven Development</a> is a software development process that is based on the idea of ​​developing tests,
+        code and refactor the code built, is very common among followers of agile methodologies. TDD is based on the idea of ​​unit tests for the code you must build. Unlike the commonly used procedure,
+        build the code and then perform unit testing, TDD requires that you first have to take a test and then develop the code that solves it. Obviously the TDD method does not finish here,
+        also adds code refactoring, re-structuring of the implemented code, an important factor that should not forget.
+    </p>
+}
+

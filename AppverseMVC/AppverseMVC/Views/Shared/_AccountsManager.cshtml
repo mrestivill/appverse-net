@@ -1,0 +1,71 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Identity Accounts manager Showcase</h3>
+<p>
+    MVC Showcase using Entity Framework as ORM<br />
+    Main features:<br />
+    - View a list of user accounts (Index), with links to various relevant functionality (Edit, Roles, Etc.)<br />
+    - Create a new User<br />
+    - Edit a User (Administrators need to be able to edit user accounts, assign roles, and such)<br />
+    - Delete a User (We want to be able to remove User accounts (or at least render them active or inactive)<br />
+    - Assign Roles to a User <br />
+
+    It has been developed inside an area to facilitate the packetization and easy integration in other projects.
+</p>
+<p>
+    Go to the <a href="/AccountsManager/Accounts/Index" class="btn-sm btn-info">Show case</a>
+</p>
+<p>
+    <b>Note:</b> To view these pages you need to be logged with a user having admin rights. <b>(Default administration user: Admin/admin123 or default user: User/user123)</b>
+</p>
+
+    @if (ViewBag.HelpPage.SummaryMode == false)
+    {
+    <p>
+        When executing the project for the first time, if the database is not created automatically, you should execute the following command
+        into the Package Manager Console:
+
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+        <pre class="prettyprint">
+        Update-Database
+        </pre>
+    </p>
+    <p>
+        With this command, it is possible to generate a sql script containg all tables containing in the model:
+        <pre class="prettyprint">
+        Update-Database -Script -SourceMigration 0
+        </pre>        
+    </p>
+    <p>
+        The code related with the Account Manager is based in:
+        <a href="http://www.codeproject.com/Articles/682113/Extending-Identity-Accounts-and-Implementing-Role">Learn more…</a>
+    </p>
+    <p>
+
+
+        EF Migrations Command Reference:
+        <a href="http://coding.abel.nu/2012/03/ef-migrations-command-reference/#Add-Migration">Learn more…</a>
+
+    </p>
+}
+

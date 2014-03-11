@@ -1,0 +1,213 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Cross-Site Scripting and Cross Site Request Forgery</h3>
+<p>
+    <b>Cross-Site Scripting (XSS)</b> enables attackers to inject client-side script into Web pages viewed by other users.
+</p>
+<p>
+    <b>Cross-Site Request Forgery (XSRF/CSRF    )</b>  is an attack where a malicious site sends a request to a vulnerable site where the user is currently logged in.
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <br />
+    <h3>Cross-Site Scripting (XSS)</h3>
+    <p>
+        By default, MVC rejects requests containing HTML markup to prevent Cross-Site Scripting attacks and this is one advantage of MVC since if you forgot to work on XSS preventions then you still win.
+        If you want to allow to post HTML back to your model, you can allow it using one of these two ways:
+    </p>
+    <p>
+        <b>[AllowHtml]</b>
+        <br />Add this annotation in the corresponding property of the model where we want to allow HTML markup.
+    </p>
+    <p>
+        <b>[ValidateInput(false)]</b>
+        <br />Add this attribute/action filter in the corresponding Action of the Controller. By default use always the [AllowHtml] approach.
+    </p>
+
+
+    <br />
+    <h3>Cross Site Request Forgery (XSRF/CSRF)</h3>
+    <p>
+        ASP.NET MVC contains its own set of built-in helpers that protect against CSRF using unique tokens passed in with the request. The helpers use not only
+        a required hidden form field but also a cookie value, making it more difficult to forge a request. These protections are easy to implement and absolutely essential to incorporate into your applications.
+    </p>
+
+
+    <h4>MVC</h4>
+
+    <p>To add the anti-forgery token to a Razor page, use the <b>HtmlHelper.AntiForgeryToken</b> method:</p>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <pre class="prettyprint">
+        &#64;using (Html.BeginForm())
+        {
+            <b>&#64;Html.AntiForgeryToken()</b>
+            &#60;div class="form-horizontal">
+                &#64;Html.ValidationSummary(true)
+                &#60;div class="form-group">
+                    &#64;Html.LabelFor(model => model.Description, new { &#64;class = "control-label col-md-2" })
+                    &#60;div class="col-md-10">
+                        &#64;Html.TextBoxFor(model => model.Description, new { &#64;class = "form-control" })
+                        &#64;Html.ValidationMessageFor(model => model.Description)
+                    &#60;/div>
+                &#60;/div>
+            &#60;/div>
+        }
+    </pre>
+
+    <p>
+        Next, to validate an incoming form post, we have to add the [ValidateAntiForgeryToken] filter to the target action method:
+    </p>
+    <pre class="prettyprint">
+        [ValidateAntiForgeryToken]
+        public virtual ActionResult Create(Item newItem)
+        {
+            ...
+        }
+    </pre>
+
+    <h4>Web API</h4>
+    <p>Requires some rework based on MVC code. By default it is not supported.</p>
+    <p>The form token can be a problem for AJAX requests, because an AJAX request might send JSON data, not HTML form data. One solution is to send the tokens in a custom HTTP header. </p>
+    <p>if we are in a MVC View, and we can use Razor sintax, we can use this approach:</p>
+    <a href="http://www.asp.net/web-api/overview/security/preventing-cross-site-request-forgery-(csrf)-attacks">Preventing Cross-Site Request Forgery (CSRF) Attacks</a>
+    <p>If it is not possible, we will have to read that token using javascript:</p>
+    <pre class="prettyprint">    
+     //Modification in the Simple Test Client for ASP.NET Web API to add automatically in the header (when it is available) the X-XSRF-Token
+    var csrfToken = $("input[name='__RequestVerificationToken']").val();
+    if (csrfToken != "" && typeof csrfToken !== "undefined") {
+        addOrReplaceHeader(headers, "X-XSRF-Token", csrfToken);
+    }
+    </pre>
+    
+    <p>In the server side, when we process the request, we have tp extract the token from the request header. Then call the AntiForgery.Validate method to validate the tokens.</p>
+    <p>We have created a filter action to validate this token:</p>
+
+
+    <pre class="prettyprint">    
+        [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        public sealed class ValidateHttpAntiForgeryTokenAttribute : FilterAttribute, IAuthorizationFilter
+        {
+            public Task&#60;httpresponsemessage> ExecuteAuthorizationFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func&#60;task&#60;httpresponsemessage>> continuation)
+            {
+                HttpRequestMessage request = actionContext.Request;
+                try
+                {
+                    if (IsAjaxRequest(request))
+                    {
+                        ValidateRequestHeader(request);
+                    }
+                    else
+                    {
+                        //string cookieToken, formToken;
+                        //AntiForgery.GetTokens(null, out cookieToken, out formToken);
+                        //string rec = request.Headers.GetValues("RequestVerificationToken").FirstOrDefault();
+                        AntiForgery.Validate();
+                    }
+                }
+                catch (Exception)
+                {
+                    //LogManager.GetCurrentClassLogger().Warn("Anti-XSRF Validation Failed", ex);
+                    actionContext.Response = new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.Forbidden,
+                        RequestMessage = actionContext.ControllerContext.Request
+                    };
+                    return FromResult(actionContext.Response);
+                }
+                return continuation();
+            }
+
+            private bool IsAjaxRequest(HttpRequestMessage request)
+            {
+                IEnumerable&#60;string> xRequestedWithHeaders;
+                if (request.Headers.TryGetValues("X-Requested-With", out xRequestedWithHeaders))
+                {
+                    string headerValue = xRequestedWithHeaders.FirstOrDefault();
+                    if (!String.IsNullOrEmpty(headerValue))
+                    {
+                        return String.Equals(headerValue, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+                // else added by Jordi Olivé to be able to accept the requests of WebApiTestClient (Simple Test Client for ASP.NET Web API)
+                else
+                {
+                    if (request.Headers.TryGetValues("X-XSRF-Token", out xRequestedWithHeaders))
+                    {
+                        string headerValue = xRequestedWithHeaders.FirstOrDefault();
+                        if (!String.IsNullOrEmpty(headerValue))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+    
+    </pre>
+
+    <p>
+        Finally, to validate the AntiForgery Token, we have to add the [ValidateHttpAntiForgeryTokenAttribute] filter to the target action method:
+    </p>
+
+    <pre class="prettyprint">
+        [ValidateHttpAntiForgeryTokenAttribute]
+        public HttpResponseMessage PostItem(Item newItem)
+        {
+            Logger.InfoFormat("Post(" + newItem + ") operation");
+            if (newItem == null)
+            {
+                Logger.Error("Error when adding a item. It is null");
+                throw new HttpResponseException(HttpStatusCode.Conflict);
+            }
+            else
+            {
+                Repository.Add&#60;Item>(newItem);
+                var response = Request.CreateResponse&#60;Item>(HttpStatusCode.Created, newItem);
+                string uri = Url.Link("DefaultApi", new { id = newItem.Id });
+                response.Headers.Location = new Uri(uri);
+                return response;
+            }
+        }
+    </pre>
+
+    <p>    
+        If you're on a server farm, <a href="http://stackoverflow.com/questions/1360078/asp-net-mvc-validation-of-viewstate-mac-failed">make sure your machine key on every server is the same.</a>
+    </p>
+    <br />
+    <h4>Concepts and interesting links</h4>
+    <p>
+        Concepts:
+        <br /><a href="http://es.wikipedia.org/wiki/Cross_Site_Request_Forgery">Basic concepts</a>,
+        <br /><a href="http://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages">XSRF/CSRF Prevention in ASP.NET MVC and Web </a> and
+        <br /><a href="http://www.asp.net/web-api/overview/security/preventing-cross-site-request-forgery-%28csrf%29-attacks">Preventing Cross-Site Request Forgery (CSRF) Attacks </a><br />
+
+    </p>
+    <p>
+        Interesting links:
+        <br /><a href="http://kamranicus.com/blog/posts/70/protip-using-anti-forgery-token-with-aspnet-web-ap/">http://kamranicus.com/blog/posts/70/protip-using-anti-forgery-token-with-aspnet-web-ap/</a>
+        <br /><a href="">https://github.com/IdeaBlade/BreezeKnockoutSpaTemplateVsix/blob/master/BreezeKnockoutSpaTemplateVsix/ProjectTemplates/BreezeMvcSpaProjectTemplate.cshtml/Filters/ValidateHttpAntiForgeryTokenAttribute.cs</a>
+        <br /><a href="">https://gist.github.com/kamranayub/5449779</a>
+    </p>
+}

@@ -1,0 +1,116 @@
+﻿@*Copyright (c) 2014 GFT Appverse, S.L., Sociedad Unipersonal.
+
+    This Source Code Form is subject to the terms of the Appverse Public License
+    Version 2.0 (“APL v2.0”). If a copy of the APL was not distributed with this
+    file, You can obtain one at http://www.appverse.mobi/licenses/apl_v2.0.pdf. [^]
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the conditions of the AppVerse Public License v2.0
+    are met.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. EXCEPT IN CASE OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.*@
+
+<h3>Appverse Web# Web API operations</h3>
+<p>
+    This showcase shows how to support CRUD operations in an HTTP service using ASP.NET Web API. CRUD stands for "Create, Read, Update, and Delete," which are the four basic database operations.
+    Many HTTP services also model CRUD operations through REST or REST-like APIs. The implementation has been based on this page:
+    <a href="http://www.asp.net/web-api/overview/creating-web-apis/creating-a-web-api-that-supports-crud-operations">Creating a Web API that Supports CRUD Operations</a>
+</p>
+
+<p>
+    Go to the <a href="/Items/WebAPIOperations" class="btn-sm btn-info">Show case</a>
+</p>
+
+@if (ViewBag.HelpPage.SummaryMode == false)
+{
+    <p>Main technical topics covered in this show case:</p>
+    <ul>
+        <li>REST services using Web Api</li>
+        <li>@Html.ActionLink("Session authentication and authorization", "WebApiOperations", "Items", new { id = "_WebApiAuth" }, null)</li>
+        <li>@Html.ActionLink("Nhibernate", "WebApiOperations", "Items", new { id = "_ORM" }, null)</li>
+        <li>@Html.ActionLink("Castle Windsor and Dependency injection", "WebApiOperations", "Items", new { id = "_WebApiIoC" }, null)</li>
+        <li>@Html.ActionLink("Security: Implementation of security patterns as Cross-Site Request Forgery and Anti-Forgery Token", "WebApiOperations", "Items", new { id = "_WebApiSecurity" }, null)</li>
+    </ul>
+
+    <p>This show case also integrates two very interesting tools:</p>
+    <ul>
+        <li>@Html.ActionLink("ASP.NET Web API Help Page", "WebApiOperations", new { id = "_WebApiHelpPage" }), a useful extension that automatically generates a web-based documentation for you Web APIs.</li>
+        <li>@Html.ActionLink("Simple Test Client for ASP.NET Web API", "WebApiOperations", new { id = "_WebApiSimpleTestClient" }), a simple Test Client built on top of ASP.NET Web API Help Page</li>
+    </ul>
+
+    <h3>REST services using Web Api</h3>
+    <p>The acronym CRUD refers to all of the major functions that are implemented in relational database applications. Each letter in the acronym can map to a standard a SQL statement and HTTP method:</p>
+
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Operation</th>
+            <th>SQL</th>
+            <th>HTTP</th>
+        </tr>
+        <tr>
+            <td>Create</td>
+            <td>INSERT</td>
+            <td>POST</td>
+        </tr>
+        <tr>
+            <td>Read</td>
+            <td>SELECT</td>
+            <td>GET</td>
+        </tr>
+        <tr>
+            <td>Update</td>
+            <td>UPDATE</td>
+            <td>PUT</td>
+        </tr>
+        <tr>
+            <td>Delete</td>
+            <td>DELETE</td>
+            <td>DELETE</td>
+        </tr>
+    </table>
+
+
+    <p>A RESTful web service is a web API implemented using HTTP and REST principles. It is a collection of resources, with four defined aspects:</p>
+    <ul>
+        <li>the base URI for the web API, such as <a href="/api/ItemsCRUD"><code>/api/ItemsCRUD</code></a></li>
+        <li>the Internet media type of the data supported by the web API. This is often JSON but can be any other valid Internet media type provided that it is a valid hypertext standard.</li>
+        <li>the set of operations supported by the web API using HTTP methods (e.g., GET, PUT, POST, or DELETE).</li>
+    </ul>
+    <p>The following table shows how the HTTP methods are typically used to implement a web API.</p>
+
+
+    <caption>RESTful web API HTTP methods</caption>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Resource</th>
+            <th>GET</th>
+            <th>PUT</th>
+            <th>POST</th>
+            <th>DELETE</th>
+        </tr>
+        <tr>
+            <th>Collection URI, such as <a href="/api/ItemsCRUD"><code>/api/ItemsCRUD</code></a></th>
+            <td><b>List</b> the URIs and perhaps other details of the collection's members.</td>
+            <td><b>Replace</b> the entire collection with another collection.</td>
+            <td><b>Create</b> a new entry in the collection. The new entry's URI is assigned automatically and is usually returned by the operation.</td>
+            <td><b>Delete</b> the entire collection.</td>
+        </tr>
+        <tr>
+            <th>Element URI, such as <a href="/api/ItemsCRUD/1"><code>/api/ItemsCRUD/1</code></a></th>
+            <td><b>Retrieve</b> a representation of the addressed member of the collection, expressed in an appropriate Internet media type.</td>
+            <td><b>Replace</b> the addressed member of the collection, or if it doesn't exist, <b>create</b> it.</td>
+            <td>Not generally used. Treat the addressed member as a collection in its own right and <b>create</b> a new entry in it.</td>
+            <td><b>Delete</b> the addressed member of the collection.</td>
+        </tr>
+    </table>
+}
