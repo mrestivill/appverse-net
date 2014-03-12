@@ -25,7 +25,7 @@
             line-height: 150px;
         }
 
-        p {
+        #subHeader {
             font-size: 20px;
             color: #fff;
             background: #969696;
@@ -94,58 +94,142 @@
     </style>
 </head>
 <body>
-
     <div id="header">
-        <h1>Your ASP.NET application</h1>
-        <p>Congratulations! You've created a project</p>
+        <h1>Appverse Web# application</h1>
+        <p id="subHeader">Congratulations! You've created a project based on Appverse Web# framework using ASP.NET MVC</p>
+    </div>
+
+    <div id="main">
+        <h2>Steps to compile and execute the solution for the first time</h2>
+        <ol>
+            <li>Right click over Solution 'AppverseMVC’ node and select “Enable NuGet Package Restore”.</li>
+            <li>Rebuild solution: 0 errors.</li>
+            <li>Check database connetions Appverse\web.Config file:<br />
+
+                &#60;add name="ShowcaseConnection" connectionstring="Data Source=.\sqlexpress;Initial Catalog=AppverseMVC_dev;Integrated Security=True" providername="System.Data.SqlClient" /&#62;<br /><br />
+
+                &#60;add name="MembershipConnection" connectionstring="Data Source=.\sqlexpress;Initial Catalog=Appverse_users_dev;Integrated Security=True" providername="System.Data.SqlClient" /&#62;<br /><br />
+
+            This configuration is using integrated security and a local SQL Server Express. Check if this configuration is ok for you.
+            </li>
+            <li>Create an empty database for the "ShowcaseConnection" with its name. In this case “AppverseMVC_dev”.</li>
+            <li>Open the “Package Manager Console” in “View -> Other Windows -> Package Manager Console”.</li>
+            <li>Run the 'Update-Database' command. This will create the "MembershipConnection" database.</li>
+            <li>Execute the project.</li>
+        </ol>
     </div>
 
     <div id="main">
         <div class="section first">
-            <h2>This application consists of:</h2>
-            <ul>
-                <li>Sample pages showing basic nav between Home, About, and Contact</li>
-                <li>Theming using <a href="http://go.microsoft.com/fwlink/?LinkID=320754">Bootstrap</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320755">Authentication</a>, if selected, shows how to register and sign in</li>
-                <li>ASP.NET features managed using <a href="http://go.microsoft.com/fwlink/?LinkID=320756">NuGet</a></li>
-            </ul>
+            <h2>Technical landscape</h2>
+            <p>
+                The objective of Appverse Web # is to become a Framework and a guideline to develop ASP.NET Web Applications. It leverages years of real-world experience in developing Web Applications
+                and it is built on top of best-of-breed open source stacks and using standards on each layer.
+            </p>
+            <p>
+                Appverse Web# aims to cover the main important points when developing an Enterprise Web Application. It combines technologies as ASP.NET MVC, HTML5, CSS, JavaScript, Bootstrap, JQuery,
+                Castle Windsor, NHibernate, Entity Framework, Modernizer, JSON2. It adds functionalities as globalization, logging, security, services or responsive layout between many others.
+            </p>
         </div>
 
         <div class="section">
-            <h2>Customize app</h2>
-            <ul>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320757">Get started with ASP.NET MVC</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320758">Change the site's theme</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320759">Add more libraries using NuGet</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320760">Configure authentication</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320761">Customize information about the website users</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320762">Get information from social providers</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320763">Add HTTP services using ASP.NET Web API</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320764">Secure your web API</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320765">Add real-time web with ASP.NET SignalR</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320766">Add components using Scaffolding</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320767">Test your app with Browser Link</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320768">Share your project</a></li>
-            </ul>
+            <h2>ASP.NET MVC</h2>
+            <p>
+                ASP.NET MVC is a free Microsoft framework to develop web applications using the Model-View-Controller pattern. It provides total control over your HTML and URLs, enables rich Ajax integration,
+                and facilitates test driven development. It is used in the presentation layer and it allows to be combined with  HTML5, CSS or JavaScript technologies as Bootstrap, JQuery, Modernizr,...
+            </p>
+            <h2>Responsive layout using Bootstrap framework</h2>
+            <p>
+                It is a framework to design html pages that provides an optimal viewing, reading and navigation across a wide range of devices (from mobile phones to desktop computer monitors). The layout of the screen is adapted to the size of the browser screen.
+            </p>
+            <h2>Globalization</h2>
+            <p>
+                Globalization is the process of designing and developing a software product that functions in multiple cultures/locales. This process involves identifying the culture that must be supported,
+                input, validate, display, formatting, and output according to the different supported cultures.
+            </p>
+            <h2>Security</h2>
+            <p>
+                Appverse makes use and extends all security API provided by Microsoft related with authentication authorization and protections as Cross-Site Scripting and Cross Site Request Forgery.<br />
+                <b>Cross-Site Scripting</b>: When you need to post HTML back to your model, don’t use ValidateInput(false) to turn off Request Validation. Simply add [AllowHtml] to your model property<br />
+                <b>Cross Site Request Forgery</b>: ASP.NET MVC contains its own set of built-in helpers that protect against CSRF using unique tokens passed in with the request. The helpers use not only a required hidden form field but also a cookie value, making it quite a bit more difficult to forge a request. These protections are easy to implement and absolutely essential to incorporate into your applications.
+            </p>
+            <h2>Authentication and authorization</h2>
+            <p>
+                This showcase is configured to use ASP.NET Identity (formerly known as ASP.NET membership) for user authentication. ASP.NET Identity enables a user to register an account,
+                by creating a username and password on the site or by signing in with social providers such as Facebook, Google, Microsoft Account, or Twitter. The default data store
+                for user profiles in ASP.NET Identity is a SQL Server database, which you can be deployed to SQL Server or Windows Azure SQL Database for the production site.
+            </p>
         </div>
-
         <div class="section">
-            <h2>Deploy</h2>
-            <ul>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320769">Ensure your app is ready for production</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320770">Windows Azure</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320771">Hosting providers</a></li>
-            </ul>
+            <h2>Inversion of control container</h2>
+            <p>
+                Appverse makes use of Castle Windsor to provide IoC container, dependency injection and interceptors functionality. With an IoC container, classes do not need to create,
+                destroy or configure the classes they depend on. This is managed transparently by Castle Windsor  Container. This reduces coupling and simplifies reuse and testability.
+            </p>
+            <h2>Interceptors</h2>
+            <p>
+                It is possible to alter the behavior of required objects transparently providing pre/post processing and many other things as caching, logging, transactions or profiling.
+                We have developed 4 generic interceptors: LogInterceptor, ExceptionInterceptor, TransactionInterceptor and CachingIntercetor.<br />
+            </p>
+            <h2>Dependency injection</h2>
+            <p>
+                Persistence layer with NHibernate and logging functionality with Log4net are configured to be used in this way.
+                It is a good practice that allows the declaration and initialization of classes and objects we use constantly and at different places.
+            </p>
+            <h2>Persistence layer</h2>
+            <p>
+                Databases connection is done using ORM NHibernate and Entity Framework. But when possible, we recommend to use NHibernate as a default ORM, mainly when using Castle Windsor as a Container and Dependency
+                Injection. As can be observed in this project, it is possible to combine both ORM in the same project.  We are using ADO.NET Entity Framework for users and roles. In next releases we plan to change the way we
+                use ADO.NET Entity Framework to add Integration of Dependency Injection using Castle Windsor.
+            </p>
+            <p>
+                In this showcase we have implemented a Repository interface with <b>Server Side Pagination</b> to avoid issues when there are a large number of items.
+            </p>
+            <p>If there is the requirement to use a MicroORM or a SQL Object Mapper, we recommend Dapper</p>
+            <h2>Logging</h2>
+            <p>
+                Castle Windsor comes with an optional facility called logging facility. This facility provides common abstraction for logging frameworks such
+                as Log4net and NLog frameworks. Currently, this show case is configured to use Log4Net.
+            </p>
+            <h2>Transaction demarcation</h2>
+            <p>.NET Frameworks allows explicit transaction demarcation, for distributed transactions as well as single-resource transactions. We have made tests using nHibernate and Entity framework in the same transaction and it was possible to rollback all changes.</p>
         </div>
 
         <div class="section last">
-            <h2>Get help</h2>
-            <ul>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320772">Get help</a></li>
-                <li><a href="http://go.microsoft.com/fwlink/?LinkID=320773">Get more templates</a></li>
-            </ul>
+            <h2>REST Services</h2>
+            <p>
+                This showcase implements a REST service using ASP.NET Web API and implements the default CRUD operations "Create, Read, Update, and Delete".
+                The service returns XML or JSON data depending on the request and implements authentication and authorization, security patterns as Cross-Site Request
+                Forgery and Anti-Forgery Token, Dependency injection for database and logging operations.
+            </p>
+            <h2>Improving Performance with Output Caching</h2>
+            <p>
+                You can improve the performance of an ASP.NET MVC application by taking advantage of the output cache. The output cache enables you to cache the content returned by a controller action.
+                That way, the same content does not need to be generated each and every time the same controller action is invoked.
+            </p>
+            <h2>JQuery</h2>
+            <p>
+                jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers
+                Normal  and UI
+            </p>
+            <h2>JQuery UI</h2>
+            <p>
+                jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library. Whether you're building highly interactive web applications or you just need to add a date picker to a form control,
+                jQuery UI is a perfect choice. Also, in this showcase, we demostrate that it is possible to combine bootstrap and JQuery UI components in the same project.
+            </p>
+            <h2>Modernizr</h2>
+            <p>
+                Modernizr makes it easy to write conditional JavaScript and CSS to handle each situation, whether a browser supports a feature or not. It’s perfect for doing progressive enhancement easily.
+            </p>
+            <h2>JSON2</h2>
+            <p>Some browsers (e.g., IE < 8) don't support some JSON functions natively, but you can overcome this by adding a script reference to json2.js</p>
+            <h2>Bundling and Minification</h2>
+            <p>
+                Bundling and minification are two techniques we can use to improve request load time.  Bundling is a feature that makes it easy to combine or bundle multiple files into a single file. You can create CSS, JavaScript and other bundles. Fewer files means fewer HTTP requests and that can improve first page load  performance.
+                Minification performs a variety of different code optimizations to scripts or css, such as removing unnecessary white space and comments and shortening variable names to one character. With this technique we can reduce the size of the requested assets.
+
+            </p>
         </div>
     </div>
-
 </body>
 </html>
