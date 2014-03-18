@@ -35,6 +35,7 @@ using Microsoft.Owin.Security;
 using Appverse.Web.Models;
 using Appverse.Web.Core.Controllers;
 using System.Web.Routing;
+using Castle.Core.Logging;
 
 namespace Appverse.Web.Controllers
 {
@@ -96,6 +97,7 @@ namespace Appverse.Web.Controllers
                 }
                 else
                 {
+                    Logger.Debug("Invalid username or password for user: " + model.UserName);
                     ModelState.AddModelError("", "Invalid username or password.");
                 }
             }
@@ -251,8 +253,10 @@ namespace Appverse.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
+            Logger.Debug("ExternalLogin " + provider + " " + returnUrl);
+
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }), Logger);
         }
 
         //
@@ -260,6 +264,8 @@ namespace Appverse.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            Logger.Debug("ExternalLoginCallback " + returnUrl);
+
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
@@ -273,13 +279,21 @@ namespace Appverse.Web.Controllers
                 await SignInAsync(user, isPersistent: false);
                 return RedirectToLocal(returnUrl);
             }
-            else
+
+            ClaimsIdentity claimsIdentity = await this.GetExternalClaimsIdentity();
+
+            string emailAddress = string.Empty;
+
+            if (claimsIdentity != null)
             {
-                // If the user does not have an account, then prompt the user to create an account
-                ViewBag.ReturnUrl = returnUrl;
-                ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { UserName = loginInfo.DefaultUserName });
+                emailAddress = claimsIdentity.FindFirstValue(ClaimTypes.Email);
+                if (emailAddress == null) emailAddress = string.Empty;
             }
+
+            // If the user does not have an account, then prompt the user to create an account
+            ViewBag.ReturnUrl = returnUrl;
+            ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
+            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { UserName = loginInfo.DefaultUserName, Email = emailAddress });
         }
 
         //
@@ -289,7 +303,7 @@ namespace Appverse.Web.Controllers
         public ActionResult LinkLogin(string provider)
         {
             // Request a redirect to the external login provider to link a login for the current user
-            return new ChallengeResult(provider, Url.Action("LinkLoginCallback", "Account"), User.Identity.GetUserId());
+            return new ChallengeResult(provider, Url.Action("LinkLoginCallback", "Account"), User.Identity.GetUserId(), Logger);
         }
 
         //
@@ -329,7 +343,12 @@ namespace Appverse.Web.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser() { UserName = model.UserName, LastName="-", FirstName="-", Email="-" };
+
+                ApplicationUser user;
+                if (model.Email==null) 
+                    user = new ApplicationUser() { UserName = model.UserName, LastName="-", FirstName="-", Email= "-" };
+                else
+                    user = new ApplicationUser() { UserName = model.UserName, LastName="-", FirstName="-", Email= model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -362,6 +381,7 @@ namespace Appverse.Web.Controllers
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
+            Logger.Debug("ExternalLoginFailure");
             return View();
         }
 
@@ -395,12 +415,57 @@ namespace Appverse.Web.Controllers
             }
         }
 
+
+        private async Task SaveAccessToken(ApplicationUser user, ClaimsIdentity identity)
+        {
+            var userclaims = await UserManager.GetClaimsAsync(user.Id);
+
+            foreach (var at in (
+                from claims in identity.Claims
+                where claims.Type.EndsWith("access_token")
+                select new Claim(claims.Type, claims.Value, claims.ValueType, claims.Issuer)))
+            {
+
+                if (!userclaims.Contains(at))
+                {
+                    await UserManager.AddClaimAsync(user.Id, at);
+                }
+            }
+        }
+
         private async Task SignInAsync(ApplicationUser user, bool isPersistent)
         {
+            Logger.Debug("SignInAsync " + user.Email + " " + user.FirstName + " " + user.ToString());
+
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             var identity = await UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+
+            await SetExternalProperties(identity);
+
             AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
+
+            await SaveAccessToken(user, identity);
         }
+
+        private async Task SetExternalProperties(ClaimsIdentity identity)
+        {
+            // get external claims captured in Startup.ConfigureAuth
+            ClaimsIdentity ext = await AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
+
+            if (ext != null)
+            {
+                var ignoreClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims";
+                // add external claims to identity
+                foreach (var c in ext.Claims)
+                {
+                    if (!c.Type.StartsWith(ignoreClaim))
+                        if (!identity.HasClaim(c.Type, c.Value))
+                            identity.AddClaim(c);
+                }
+            }
+        }
+
+
 
         private void AddErrors(IdentityResult result)
         {
@@ -440,25 +505,38 @@ namespace Appverse.Web.Controllers
             }
         }
 
+        private async Task<ClaimsIdentity> GetExternalClaimsIdentity()
+        {
+            ClaimsIdentity claimsIdentity =
+                await this.AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie) ??
+                await this.AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalBearer);
+            return claimsIdentity;
+        }
+
         private class ChallengeResult : HttpUnauthorizedResult
         {
-            public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null)
+            public ChallengeResult(string provider, string redirectUri, ILogger logger)
+                : this(provider, redirectUri, null, logger)
             {
             }
 
-            public ChallengeResult(string provider, string redirectUri, string userId)
+            public ChallengeResult(string provider, string redirectUri, string userId, ILogger logger)
             {
                 LoginProvider = provider;
                 RedirectUri = redirectUri;
                 UserId = userId;
+                Logger = logger;
             }
 
             public string LoginProvider { get; set; }
             public string RedirectUri { get; set; }
             public string UserId { get; set; }
+            public ILogger Logger { get; set; }
 
             public override void ExecuteResult(ControllerContext context)
             {
+                if (Logger!=null) Logger.Debug("ExecuteResult " + context.ToString());
+
                 var properties = new AuthenticationProperties() { RedirectUri = RedirectUri };
                 if (UserId != null)
                 {

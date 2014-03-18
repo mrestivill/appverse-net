@@ -28,6 +28,7 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using System;
+using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -53,9 +54,57 @@ namespace Appverse.Web
             // Use a cookie to temporarily store information about a user logging in with a third party login provider
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
-            // Uncomment the following lines to enable logging in with third party login providers
-            app.UseMicrosoftAccountAuthentication(clientId: System.Configuration.ConfigurationManager.AppSettings["MicrosoftClientId"], clientSecret: System.Configuration.ConfigurationManager.AppSettings["MicrosoftClientSecret"]);
 
+
+            // http://www.theroks.com/social-login-owin-authentication-mvc5/
+
+            // Microsoft : Create application
+            // https://account.live.com/developers/applications
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("MicrosoftClientId")))
+            {
+                app.UseMicrosoftAccountAuthentication(new Microsoft.Owin.Security.MicrosoftAccount.MicrosoftAccountAuthenticationOptions
+                {
+                    ClientId = ConfigurationManager.AppSettings.Get("MicrosoftClientId"),
+                    ClientSecret = ConfigurationManager.AppSettings.Get("MicrosoftClientSecret"),
+                    CallbackPath = new PathString("/signin-microsoft"),
+                    Provider = new Microsoft.Owin.Security.MicrosoftAccount.MicrosoftAccountAuthenticationProvider()
+                    {
+                        OnAuthenticated = (context) =>
+                        {
+                            context.Identity.AddClaim(new System.Security.Claims.Claim("urn:microsoftaccount:access_token", context.AccessToken, XmlSchemaString, "Microsoft"));
+
+                            return Task.FromResult(0);
+                        }
+                    }
+                });
+            }
+
+
+            // Google : Create application
+            // https://console.developers.google.com/project
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("GoogleClientId")))
+            {
+                app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
+                {                    
+                    ClientId = ConfigurationManager.AppSettings.Get("GoogleClientId"),
+                    ClientSecret = ConfigurationManager.AppSettings.Get("GoogleClientSecret"),
+                    CallbackPath = new PathString("/signin-google"),
+                    Provider = new GoogleOAuth2AuthenticationProvider
+                    {
+                        OnAuthenticated = context =>
+                        {
+                            context.Identity.AddClaim(
+                                new Claim(
+                                    ClaimTypes.Email,
+                                    context.Email));
+                            return Task.FromResult<object>(null);
+                        }
+                    }
+                });
+            }
+
+
+            // Uncomment the following lines to enable logging in with third party login providers
             //app.UseTwitterAuthentication(
             //   consumerKey: "",
             //   consumerSecret: "");
@@ -63,9 +112,8 @@ namespace Appverse.Web
             //app.UseFacebookAuthentication(
             //   appId: "",
             //   appSecret: "");
-
-            app.UseGoogleAuthentication();
-            //app.Properties.
         }
+
+        const string XmlSchemaString = "http://www.w3.org/2001/XMLSchema#string";
     }
 }

@@ -153,6 +153,9 @@ namespace Appverse.Web.Controllers
         /// <returns>View Create</returns>
         public virtual ActionResult Create()
         {
+            var locations = items.GetPage<Location>(0, 0);
+            ViewBag.Locations = items.GetPage<Location>(0, 0).Items.ToList<Location>();
+
             return View();
         }
 
@@ -256,9 +259,9 @@ namespace Appverse.Web.Controllers
         public ActionResult Edit(int id)
         {
 
-            var locations = items.GetPage<Location>(0, 2);
+            var locations = items.GetPage<Location>(0, 0);
 
-            ViewBag.Locations = items.GetPage<Location>(0, 2).Items.ToList<Location>();
+            ViewBag.Locations = items.GetPage<Location>(0, 0).Items.ToList<Location>();
 
             var selectedItem = items.Get<Item>(id);
             return View(selectedItem);

@@ -33,8 +33,6 @@
 
 @using (Html.BeginForm())
 {
-    IList<Location> locs = ViewBag.Locations;
-    
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
@@ -76,19 +74,9 @@
                 Value = option.Id.ToString(),
                 Selected = (Model.Location != null) && (option.Id == Model.Location.Id)
             }), "", new { @class = "form-control" })
-                @*@Html.EditorWithClassFor(model => model.Location, "form-control")*@
                 @Html.ValidationMessageFor(model => model.Location.Id)
             </div>
         </div>
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.Location, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorWithClassFor(model => model.Location, "form-control")
-                @Html.ValidationMessageFor(model => model.Location)
-            </div>
-        </div>*@
-
 
         <div class="form-group">
             @Html.LabelFor(model => model.Value, new { @class = "control-label col-md-2" })

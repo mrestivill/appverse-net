@@ -21,6 +21,7 @@
     POSSIBILITY OF SUCH DAMAGE.*@
 
 @using Appverse.Web.Components
+@using Appverse.Web.Models
 @model Appverse.Web.Models.Item
 
 @{
@@ -29,10 +30,10 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Item</h4>
         <hr />
@@ -56,7 +57,7 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Moment, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">                
+            <div class="col-md-10">
                 @Html.EditorWithClassFor(model => model.Moment, "form-control")
                 @Html.ValidationMessageFor(model => model.Moment)
             </div>
@@ -65,8 +66,12 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Location, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Location, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Location)
+                @Html.DropDownListFor(model => model.Location.Id, ((IEnumerable<Location>)ViewBag.Locations).Select(option => new SelectListItem
+            {
+                Text = (option == null ? "None" : option.Name),
+                Value = option.Id.ToString()
+            }), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Location.Id)
             </div>
         </div>
 

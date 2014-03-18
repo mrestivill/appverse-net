@@ -114,6 +114,11 @@ namespace Appverse.Core.Repositories
                 criteria.SetFirstResult(firstResult);
                 criteria.SetMaxResults(pageSize);
             }
+            else
+            {
+                pageNumber = 0;
+                pageSize = 0;
+            }
 
             IEnumerable<T> items = criteria.GetExecutableCriteria(_session).List<T>();
             Page<T> page = new Page<T>(items, pageNumber, totalCount, pageSize);
