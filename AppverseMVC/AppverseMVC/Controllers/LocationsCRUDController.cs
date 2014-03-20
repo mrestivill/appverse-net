@@ -41,7 +41,7 @@ namespace Appverse.Web.Controllers
     /// Web api (restful class)
     /// </summary>
     [Authorize]
-    public class ItemsCRUDController : ApiController
+    public class LocationsCRUDController : ApiController
     {
         // this is Castle.Core.Logging.ILogger, not log4net.Core.ILogger
         public ILogger Logger { get; set; }
@@ -50,86 +50,87 @@ namespace Appverse.Web.Controllers
 
         
         /// <summary>
-        ///  GET api/itemsCRUD
+        ///  GET api/LocationsCRUD
         ///  Gets all items
         /// </summary>
         /// <returns>returns all itemps</returns>
         [AllowAnonymous]
         [AddCachingHeader(90)]
-        public IEnumerable<ItemDTO> Get()
+        public IEnumerable<Location> Get()
         {
             Logger.InfoFormat("Get operation");
 
-            var items = Repository.GetPage<Item>(0, 0).Items.ToList<Item>();
+            var items = Repository.GetPage<Location>(0, 0).Items.ToList<Location>();
 
             // A Data Transfer Objects (DTO) does not have any behaviour except for storage and retrieval of its own data (accessors and mutators). There are problems when WEB API has to serialize complex types as in this case the Location property.
-            IEnumerable<ItemDTO> itemsDTO = Mapper.Map<List<ItemDTO>>(items);
+            //IEnumerable<ItemDTO> itemsDTO = Mapper.Map<List<ItemDTO>>(items);
 
-            return itemsDTO;
+            return items;
 
         }
 
         /// <summary>
-        /// GET api/itemsCRUD/5
+        /// GET api/LocationsCRUD/5
         /// Get an item
         /// </summary>
         /// <param name="id">The identifier of the requested item</param>
         /// <returns></returns>
         /// <exception cref="System.Web.Http.HttpResponseException"></exception>
-        public ItemDTO GetItem(int id)
+        public Location GetLocation(int id)
         {
             Logger.InfoFormat("Get(" + id.ToString() + ") operation");
-            Item item = Repository.Get<Item>(id);
+            Location item = Repository.Get<Location>(id);
             if (item == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
             else
             {
-                var itemDTO2 = Mapper.Map<ItemDTO>(item);
-                return itemDTO2;
+
+                //var itemDTO2 = Mapper.Map<ItemDTO>(item);
+                return item;
             }
         }
 
 
         /// <summary>
-        /// GET api/ItemsCRUD?title=text
+        /// GET api/LocationsCRUD?title=text
         /// Gets the items by title.
         /// </summary>
         /// <param name="title">The title.</param>
         /// <returns></returns>
-        public IEnumerable<ItemDTO> GetItemsByTitle(string title)
+        public IEnumerable<Location> GetItemsByTitle(string title)
         {
             Logger.InfoFormat("Get item with title {0}", title);
 
-            IEnumerable<Item> items = Repository.GetPage<Item>(0, 50).Items.Where(p => string.Equals(p.Title, title, StringComparison.OrdinalIgnoreCase));
+            IEnumerable<Location> items = Repository.GetPage<Location>(0, 50).Items.Where(p => string.Equals(p.Name, title, StringComparison.OrdinalIgnoreCase));
 
-            return Mapper.Map<List<ItemDTO>>(items);
+            return items; // Mapper.Map<List<ItemDTO>>(items);
         }
 
-        
+       
         /// <summary>
-        /// POST api/itemsCRUD - Create
+        /// POST api/LocationsCRUD - Create
         /// Posts a new item.
         /// </summary>
-        /// <param name="newItem">The new item.</param>
+        /// <param name="newLocation">The new item.</param>
         /// <returns></returns>
         /// <exception cref="System.Web.Http.HttpResponseException"></exception>
         [ValidateHttpAntiForgeryToken]
-        public HttpResponseMessage PostItem(Item newItem)
+        public HttpResponseMessage PostLocation(Location newLocation)
         {
-            Logger.InfoFormat("Post(" + newItem + ") operation");
-            if (newItem == null)
+            Logger.InfoFormat("Post(" + newLocation + ") operation");
+            if (newLocation == null)
             {
                 Logger.Error("Error when adding a item. It is null");
                 throw new HttpResponseException(HttpStatusCode.Conflict);
             }
             else
             {
-                Repository.Add<Item>(newItem);
-                var response = Request.CreateResponse<Item>(HttpStatusCode.Created, newItem);
+                Repository.Add<Location>(newLocation);
+                var response = Request.CreateResponse<Location>(HttpStatusCode.Created, newLocation);
 
-                string uri = Url.Link("DefaultApi", new { id = newItem.Id });
+                string uri = Url.Link("DefaultApi", new { id = newLocation.Id });
                 response.Headers.Location = new Uri(uri);
                 return response;
             }
@@ -137,21 +138,21 @@ namespace Appverse.Web.Controllers
 
         
         /// <summary>
-        /// PUT api/itemsCRUD/5 - Update
+        /// PUT api/LocationsCRUD/5 - Update
         /// Puts an item.
         /// </summary>
         /// <param name="id">The identifier of the item to update</param>
-        /// <param name="itemToUpdate">The item to update.</param>
+        /// <param name="locationToUpdate">The item to update.</param>
         /// <exception cref="System.Web.Http.HttpResponseException"></exception>
         [ValidateHttpAntiForgeryToken]
-        public void PutItem(int id, Item itemToUpdate)
+        public void PutLocation(int id, Location locationToUpdate)
         {
             Logger.InfoFormat("Update(" + id.ToString() + ") operation");
 
-            itemToUpdate.Id = id;
+            locationToUpdate.Id = id;
             try
             {
-                Repository.Update<Item>(itemToUpdate);
+                Repository.Update<Location>(locationToUpdate);
             }
             catch (Exception ex)
             {
@@ -162,17 +163,17 @@ namespace Appverse.Web.Controllers
 
 
         /// <summary>
-        /// DELETE api/itemsCRUD/5
+        /// DELETE api/LocationsCRUD/5
         /// Deletes the item.
         /// </summary>
         /// <param name="id">The identifier of the item to delete</param>
         [ValidateHttpAntiForgeryToken]
-        public void DeleteItem(int id)
+        public void DeleteLocation(int id)
         {
             Logger.InfoFormat("Delete(" + id.ToString() + ") operation");
             try
             {
-                Repository.Delete<Item>(id);
+                Repository.Delete<Location>(id);
             }
             catch (Exception ex)
             {

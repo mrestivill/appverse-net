@@ -46,7 +46,7 @@ namespace Appverse.Web.Models
         public virtual string Title { get; set; }
 
 
-        public virtual bool IsDeleted { get; set; }
+        //public virtual bool IsDeleted { get; set; }
 
         //[DisplayFormat(DataFormatString = "{0:" + System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern + "}", ApplyFormatInEditMode = true)]
         //[Range(typeof(DateTime), "1", "9999", ErrorMessage = "{0} must be a decimal/number between {1} and {2}.")]

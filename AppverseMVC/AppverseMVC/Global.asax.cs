@@ -24,6 +24,9 @@
 
 using Appverse.Web.Core;
 using Appverse.Web.Installers.Dependencies;
+using Appverse.Web.Models;
+using Appverse.Web.Models.DTO;
+using AutoMapper;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using System;
@@ -43,9 +46,31 @@ namespace Appverse.Web
     {
         private static IWindsorContainer container;
 
+
+        private void PrepareMappers()
+        {
+            Mapper.CreateMap<Item, ItemDTO>()
+                .ForMember(dest => dest.Location, opt => opt.ResolveUsing<CustomResolver>().FromMember(s => s.Location));
+        }
+
+        public class CustomResolver : ValueResolver<Location, LocationDTO>
+        {
+            protected override LocationDTO ResolveCore(Location source)
+            {
+                if (source != null)
+                {
+                    LocationDTO loc = new LocationDTO();
+                    loc.Name = source.Name;
+                    loc.Id = source.Id;
+                    return loc;
+                }
+                else
+                    return null;
+            }
+        }
+
         private static void BootstrapContainer()
         {
-
             container = new WindsorContainer()
                 .Install(FromAssembly.This()).Install(FromAssembly.Containing(typeof(CultureHelper)))
                 .Install(Configuration.FromAppConfig());
@@ -64,6 +89,20 @@ namespace Appverse.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            PrepareMappers();
+
+
+            //http://www.asp.net/web-api/overview/formats-and-model-binding/json-and-xml-serialization
+            //http://stackoverflow.com/questions/14053109/failed-to-serialize-the-response-body-for-content-type
+
+            var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
+            json.UseDataContractJsonSerializer = true;
+
+            //var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
+            //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.All;
+
+            HttpConfiguration config = GlobalConfiguration.Configuration;
+            ((Newtonsoft.Json.Serialization.DefaultContractResolver)config.Formatters.JsonFormatter.SerializerSettings.ContractResolver).IgnoreSerializableAttribute = true;
 
             BootstrapContainer();
         }
