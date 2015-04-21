@@ -1,4 +1,6 @@
-#appverse-net
+﻿#appverse-net
+
+[![Build Status](https://travis-ci.org/glarfs/appverse-net.png?branch=master)](https://travis-ci.org/glarfs/appverse-net)
 
 This repository holds our initiative to extend Appverse philosophy to Microsoft's own flavour
 
