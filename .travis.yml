@@ -1,5 +1,7 @@
 language: csharp
 solution: AppverseMVC/AppverseMVC.sln
+script:
+  - xbuild /p:Configuration=Debug AppverseMVC/AppverseMVC.sln
 before_install:
   - sudo apt-get install nunit-console
 before_script:
