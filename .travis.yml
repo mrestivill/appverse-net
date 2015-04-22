@@ -1,9 +1,10 @@
 language: csharp
 solution: AppverseMVC/AppverseMVC.sln
 script:
-  - xbuild /p:Configuration=Debug AppverseMVC/AppverseMVC.sln
+  - xbuild /p:Configuration=Debug AppverseMVC.sln
 before_install:
   - sudo apt-get install nunit-console
 before_script:
-  - nuget restore AppverseMVC/AppverseMVC.sln
+  - cd AppverseMVC
+  - nuget restore AppverseMVC.sln
 
